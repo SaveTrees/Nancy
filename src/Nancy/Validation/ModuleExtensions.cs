@@ -16,7 +16,9 @@
         /// <returns>A <see cref="ModelValidationResult"/> instance.</returns>
         public static ModelValidationResult Validate<T>(this INancyModule module, T instance)
         {
-            var validator =
+	        module.ModelValidationResult.Errors.Clear();
+
+			var validator =
                 module.ValidatorLocator.GetValidatorForType(typeof(T));
 
             var result = (validator == null) ?
