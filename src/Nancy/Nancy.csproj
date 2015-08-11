@@ -291,15 +291,6 @@
     <Compile Include="Session\CookieBasedSessionsConfiguration.cs" />
     <Compile Include="StaticContent.cs" />
     <Compile Include="Conventions\ViewLocationConventions.cs" />
-    <Compile Include="Cryptography\Base64Helpers.cs" />
-    <Compile Include="Cryptography\CryptographyConfiguration.cs" />
-    <Compile Include="Cryptography\DefaultHmacProvider.cs" />
-    <Compile Include="Cryptography\HmacComparer.cs" />
-    <Compile Include="Cryptography\IHmacProvider.cs" />
-    <Compile Include="Cryptography\IKeyGenerator.cs" />
-    <Compile Include="Cryptography\NoEncryptionProvider.cs" />
-    <Compile Include="Cryptography\PassphraseKeyGenerator.cs" />
-    <Compile Include="Cryptography\RandomKeyGenerator.cs" />
     <Compile Include="DefaultNancyContextFactory.cs" />
     <Compile Include="Diagnostics\RequestTraceSession.cs" />
     <Compile Include="Diagnostics\IRequestTracing.cs" />
@@ -434,9 +425,7 @@
     <Compile Include="Security\SecurityHooks.cs" />
     <Compile Include="Security\UserIdentityExtensions.cs" />
     <Compile Include="Session\CookieBasedSessions.cs" />
-    <Compile Include="Cryptography\RijndaelEncryptionProvider.cs" />
     <Compile Include="DefaultObjectSerializer.cs" />
-    <Compile Include="Cryptography\IEncryptionProvider.cs" />
     <Compile Include="IObjectSerializerSelector.cs" />
     <Compile Include="Session\ISession.cs" />
     <Compile Include="IObjectSerializer.cs" />
@@ -597,6 +586,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nancy.Cryptography\Nancy.Cryptography.csproj">
+      <Project>{e90334a6-bdd0-403a-b734-a93457d0e8f8}</Project>
+      <Name>Nancy.Cryptography</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

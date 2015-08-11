@@ -30,7 +30,7 @@ namespace Nancy.Responses.Negotiation
             }
         }
 
-        /// <summary>
+		/// <summary>
         /// Matched the media type with another media type.
         /// </summary>
         /// <param name="other">The media type that should be matched against.</param>

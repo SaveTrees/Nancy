@@ -79,6 +79,33 @@ namespace Nancy.Responses.Negotiation
         }
 
         /// <summary>
+        /// Gets a value indicating whether the media type is a vendor tree type or not
+        /// </summary>
+        /// <value><see langword="true" /> if the media type is a vendor tree type, otherwise <see langword="false" />.</value>
+        public bool IsVendorTreeType
+        {
+            get
+            {
+                return this.Type != null && ((string)this.Subtype).StartsWith("vnd.", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        /// Returns the media type suffix (the [+suffix]), which will be empty where there is no suffix
+        /// </summary>
+        /// <example>"application/xhtml+xml", "image/png will return "+xml" and "" respectively</example>
+        public string Suffix
+        {
+            get
+            {
+                var subType = (string) this.Subtype;
+                var plus = (subType).IndexOf('+');
+
+                return plus > 0 ? subType.Substring(plus) : "";
+            }
+        }
+        
+        /// <summary>
         /// Whether or not a media range matches another, taking into account wildcards
         /// </summary>
         /// <param name="other">Other media range</param>
@@ -100,19 +127,19 @@ namespace Nancy.Responses.Negotiation
             return matches;
         }
 
-		/// <summary>
-		/// Whether or not a media range matches another, taking into account wildcards and parameters
-		/// </summary>
-		/// <param name="other">Other media range</param>
-		/// <returns>True if matching, false if not</returns>
-		public bool MatchesExactlyWithParameters(MediaRange other)
-		{
-			var matches = this.MatchesExactly(other) && this.Parameters.Matches(other.Parameters);
-			return matches;
-		}
+        /// <summary>
+        /// Whether or not a media range matches another, taking into account wildcards and parameters
+        /// </summary>
+        /// <param name="other">Other media range</param>
+        /// <returns>True if matching, false if not</returns>
+        public bool MatchesExactlyWithParameters(MediaRange other)
+        {
+            var matches = this.MatchesExactly(other) && this.Parameters.Matches(other.Parameters);
+            return matches;
+        }
 
-		
-		/// <summary>
+        
+        /// <summary>
         /// Whether or not a media range matches another exactly
         /// </summary>
         /// <param name="other">Other media range</param>
@@ -148,6 +175,34 @@ namespace Nancy.Responses.Negotiation
 
             return string.Format("{0}/{1}", mediaRange.Type, mediaRange.Subtype);
         }
+
+        ///// <summary>
+        ///// Compares the current object with another object of the same type.
+        ///// </summary>
+        ///// <returns>
+        ///// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
+        ///// </returns>
+        ///// <param name="other">An object to compare with this object.</param>
+        //public int CompareTo(MediaRange other)
+        //{
+        //	if (this.MatchesExactlyWithParameters(other))
+        //	{
+        //		return 0;
+        //	}
+
+        //	if (this.IsWildcard && !other.IsWildcard)
+        //	{
+        //		return -1;
+        //	}
+
+        //	if (this.Type.IsWildcard)
+        //	{
+        //		if (other.Type.IsWildcard)
+        //		{
+                    
+        //		}
+        //	}
+        //}
 
         public override string ToString()
         {
