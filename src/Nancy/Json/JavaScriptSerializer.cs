@@ -175,10 +175,7 @@ namespace Nancy.Json
                 return obj;
 
             if (type.IsEnum)
-                if (obj is string)
-                    return Enum.Parse(type, (string)obj, true);
-                else
-                    return Enum.ToObject(type, obj);
+                return ConvertToEnum(obj, type);
 
             TypeConverter c = TypeDescriptor.GetConverter(type);
             if (c.CanConvertFrom(sourceType))
@@ -208,8 +205,13 @@ namespace Nancy.Json
                     if (s == string.Empty)
                         return null;
                 }
-                else //It is not string at all, convert to Nullable<> type, from int to uint for example
-                    return Convert.ChangeType (obj, type.GetGenericArguments ()[0]);
+
+                var underlyingType = type.GetGenericArguments()[0];
+
+                if (underlyingType.IsEnum)
+                    return ConvertToEnum(obj, underlyingType);
+
+                return Convert.ChangeType(obj, underlyingType);
             }
 
             return Convert.ChangeType(obj, type);
@@ -266,7 +268,7 @@ namespace Nancy.Json
 
         static readonly Type typeofObject = typeof(object);
         static readonly Type typeofGenList = typeof(List<>);
-        
+
 
         object ConvertToList(ArrayList col, Type type)
         {
@@ -330,7 +332,7 @@ namespace Nancy.Json
                     Type[] arguments = type.GetGenericArguments();
                     if (arguments == null || arguments.Length != 2 || (arguments[0] != typeof(object) && arguments[0] != typeof(string) && arguments[0] != typeof(Guid)))
                         throw new InvalidOperationException(
-                            "Type '" + type + "' is not not supported for serialization/deserialization of a dictionary, keys must be strings, guids or objects.");
+                            "Type '" + type + "' is not supported for serialization/deserialization of a dictionary, keys must be strings, guids or objects.");
                     if (type.IsAbstract)
                     {
                         Type dictType = typeof(Dictionary<,>);
@@ -338,6 +340,14 @@ namespace Nancy.Json
                     }
 
                     isDictionaryWithGuidKey = arguments[0] == typeof(Guid);
+                }
+                else
+                {
+                    var converter = GetConverter(genericTypeDefinition);
+                    if (converter != null)
+                        return converter.Deserialize(
+                            EvaluateDictionary(dict),
+                            type, this);
                 }
             }
             else if (type.IsAssignableFrom(typeof(IDictionary)))
@@ -398,6 +408,14 @@ namespace Nancy.Json
             }
 
             return target;
+        }
+
+        object ConvertToEnum(object obj, Type type)
+        {
+            if (obj is string)
+                return Enum.Parse(type, (string)obj, true);
+            else
+                return Enum.ToObject(type, obj);
         }
 
         Type ResolveGenericInterfaceToType(Type type)

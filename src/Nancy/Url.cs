@@ -3,6 +3,7 @@ namespace Nancy
     using System;
     using System.Net;
     using System.Net.Sockets;
+    using System.Text;
 
     /// <summary>
     /// Represents a full Url of the form scheme://hostname:port/basepath/path?query
@@ -12,17 +13,19 @@ namespace Nancy
     {
         private string basePath;
 
+        private string query;
+
         /// <summary>
         /// Creates an instance of the <see cref="Url" /> class
         /// </summary>
         public Url()
         {
-            this.Scheme = "http";
-            this.HostName = String.Empty;
+            this.Scheme = Uri.UriSchemeHttp;
+            this.HostName = string.Empty;
             this.Port = null;
-            this.BasePath = String.Empty;
-            this.Path = String.Empty;
-            this.Query = String.Empty;
+            this.BasePath = string.Empty;
+            this.Path = string.Empty;
+            this.Query = string.Empty;
         }
 
         /// <summary>
@@ -61,15 +64,7 @@ namespace Nancy
         public string BasePath
         {
             get { return this.basePath; }
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    return;
-                }
-
-                this.basePath = value.TrimEnd('/');
-            }
+            set { this.basePath = (value ?? string.Empty).TrimEnd('/'); }
         }
 
         /// <summary>
@@ -81,8 +76,28 @@ namespace Nancy
         /// <summary>
         /// Gets the querystring data of the requested resource.
         /// </summary>
-        public string Query { get; set; }
+        public string Query
+        {
+            get { return this.query; }
+            set { this.query = GetQuery(value); }
+        }
 
+        /// <summary>
+        /// Gets and set the path and query together
+        /// </summary>
+        public string PathAndQuery
+        {
+            get
+            {
+                var pathAndQuery = Path + Query;
+                return pathAndQuery;
+            }
+            set
+            {
+                Query = value;
+                Path = value.Substring(0, value.Length - Query.Length);
+            }
+        }
 
         /// <summary>
         /// Gets the domain part of the request
@@ -91,9 +106,12 @@ namespace Nancy
         {
             get
             {
-                return this.Scheme + "://" +
-                       GetHostName(this.HostName) +
-                       GetPort(this.Port);
+                return new StringBuilder()
+                    .Append(this.Scheme)
+                    .Append(Uri.SchemeDelimiter)
+                    .Append(GetHostName(this.HostName))
+                    .Append(GetPort(this.Port))
+                    .ToString();
             }
         }
 
@@ -104,30 +122,21 @@ namespace Nancy
         {
             get
             {
-                return "https".Equals(this.Scheme, StringComparison.OrdinalIgnoreCase);
+                return Uri.UriSchemeHttps.Equals(this.Scheme, StringComparison.OrdinalIgnoreCase);
             }
         }
 
         public override string ToString()
         {
-            return this.Scheme + "://" + 
-                GetHostName(this.HostName) + 
-                GetPort(this.Port) +
-                GetCorrectPath(this.BasePath) +
-                GetCorrectPath(this.Path) +
-                GetQuery(this.Query);
-        }
-
-        private static string GetQuery(string query)
-        {
-            if (string.IsNullOrEmpty(query))
-            {
-                return string.Empty;
-            }
-
-            return query.StartsWith("?", StringComparison.OrdinalIgnoreCase) ?
-                query :
-                string.Concat("?", query);
+            return new StringBuilder()
+                .Append(this.Scheme)
+                .Append(Uri.SchemeDelimiter)
+                .Append(GetHostName(this.HostName))
+                .Append(GetPort(this.Port))
+                .Append(GetCorrectPath(this.BasePath))
+                .Append(GetCorrectPath(this.Path))
+                .Append(this.Query)
+                .ToString();
         }
 
         /// <summary>
@@ -136,7 +145,7 @@ namespace Nancy
         /// <returns>Returns a new cloned instance of the url.</returns>
         object ICloneable.Clone()
         {
-            return Clone();
+            return this.Clone();
         }
 
         /// <summary>
@@ -146,14 +155,14 @@ namespace Nancy
         public Url Clone()
         {
             return new Url
-                       {
-                           BasePath = this.BasePath,
-                           HostName = this.HostName,
-                           Port = this.Port,
-                           Query = this.Query,
-                           Path = this.Path,
-                           Scheme = this.Scheme
-                       };
+            {
+                BasePath = this.BasePath,
+                HostName = this.HostName,
+                Port = this.Port,
+                Query = this.Query,
+                Path = this.Path,
+                Scheme = this.Scheme
+            };
         }
 
         /// <summary>
@@ -161,7 +170,7 @@ namespace Nancy
         /// </summary>
         /// <param name="url">The instance that should be cast.</param>
         /// <returns>A <see cref="string"/> representation of the <paramref name="url"/>.</returns>
-        public static implicit operator String(Url url)
+        public static implicit operator string(Url url)
         {
             return url.ToString();
         }
@@ -193,16 +202,24 @@ namespace Nancy
         /// <returns>An <see cref="Url"/> representation of the <paramref name="uri"/>.</returns>
         public static implicit operator Url(Uri uri)
         {
-            var url = new Url
+            if (uri.IsAbsoluteUri)
             {
-                HostName = uri.Host,
-                Path = uri.LocalPath,
-                Port = uri.Port,
-                Query = uri.Query,
-                Scheme = uri.Scheme
-            };
+                return new Url
+                {
+                    HostName = uri.Host,
+                    Path = uri.LocalPath,
+                    Port = uri.Port,
+                    Query = uri.Query,
+                    Scheme = uri.Scheme
+                };
+            }
 
-            return url;
+            return new Url { Path = uri.OriginalString };
+        }
+
+        private static string GetQuery(string query)
+        {
+            return string.IsNullOrEmpty(query) ? string.Empty : (query[0] == '?' ? query : '?' + query);
         }
 
         private static string GetCorrectPath(string path)
@@ -212,9 +229,7 @@ namespace Nancy
 
         private static string GetPort(int? port)
         {
-            return (!port.HasValue) ?
-                string.Empty : 
-                string.Concat(":", port.Value);
+            return port.HasValue ? string.Concat(":", port.Value) :  string.Empty;
         }
 
         private static string GetHostName(string hostName)
@@ -223,10 +238,11 @@ namespace Nancy
 
             if (IPAddress.TryParse(hostName, out address))
             {
-                return (address.AddressFamily == AddressFamily.InterNetworkV6)
-                           ? string.Concat("[", address.ToString(), "]")
-                           : address.ToString();
+                var addressString = address.ToString();
 
+                return address.AddressFamily == AddressFamily.InterNetworkV6
+                    ? string.Format("[{0}]", addressString)
+                    : addressString;
             }
 
             return hostName;

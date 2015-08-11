@@ -1,12 +1,10 @@
-﻿using Nancy.Diagnostics;
-
 namespace Nancy
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using Nancy.Diagnostics;
     using Bootstrapper;
     using Nancy.TinyIoc;
 
@@ -119,10 +117,10 @@ namespace Nancy
         /// by IEnumerable{Type} constructor dependencies.
         /// </summary>
         /// <param name="container">Container to register into</param>
-        /// <param name="collectionTypeRegistrationsn">Collection type registrations to register</param>
-        protected override sealed void RegisterCollectionTypes(TinyIoCContainer container, IEnumerable<CollectionTypeRegistration> collectionTypeRegistrationsn)
+        /// <param name="collectionTypeRegistrations">Collection type registrations to register</param>
+        protected override sealed void RegisterCollectionTypes(TinyIoCContainer container, IEnumerable<CollectionTypeRegistration> collectionTypeRegistrations)
         {
-            foreach (var collectionTypeRegistration in collectionTypeRegistrationsn)
+            foreach (var collectionTypeRegistration in collectionTypeRegistrations)
             {
                 switch (collectionTypeRegistration.Lifetime)
                 {
@@ -233,7 +231,7 @@ namespace Nancy
         }
 
         /// <summary>
-        /// Retreive a specific module instance from the container
+        /// Retrieve a specific module instance from the container
         /// </summary>
         /// <param name="container">Container to use</param>
         /// <param name="moduleType">Type of the module</param>

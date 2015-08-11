@@ -253,6 +253,11 @@ namespace Nancy
         /// <summary>
         /// 510 NotExtended
         /// </summary>
-        NotExtended = 510
+        NotExtended = 510,
+
+        /// <summary>
+        /// Either a 401/403 or a 404- The resource may exist, but the server is not permitted to say.  Clients should not re-request
+        /// </summary>
+        ResourceNotDiscoverable = 466
     }
 }

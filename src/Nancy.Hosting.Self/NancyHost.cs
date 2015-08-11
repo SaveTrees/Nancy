@@ -33,7 +33,7 @@
         private readonly INancyBootstrapper bootstrapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUris"/>.
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUris"/>.
         /// Uses the default configuration
         /// </summary>
         /// <param name="baseUris">The <see cref="Uri"/>s that the host will listen to.</param>
@@ -41,7 +41,7 @@
             : this(NancyBootstrapperLocator.Bootstrapper, new HostConfiguration(), baseUris) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUris"/>.
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUris"/>.
         /// Uses the specified configuration.
         /// </summary>
         /// <param name="baseUris">The <see cref="Uri"/>s that the host will listen to.</param>
@@ -50,7 +50,7 @@
             : this(NancyBootstrapperLocator.Bootstrapper, configuration, baseUris){}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUris"/>, using
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUris"/>, using
         /// the provided <paramref name="bootstrapper"/>.
         /// Uses the default configuration
         /// </summary>
@@ -62,7 +62,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUris"/>, using
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUris"/>, using
         /// the provided <paramref name="bootstrapper"/>.
         /// Uses the specified configuration.
         /// </summary>
@@ -80,7 +80,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUri"/>, using
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUri"/>, using
         /// the provided <paramref name="bootstrapper"/>.
         /// Uses the default configuration
         /// </summary>
@@ -92,7 +92,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specfied <paramref name="baseUri"/>, using
+        /// Initializes a new instance of the <see cref="NancyHost"/> class for the specified <paramref name="baseUri"/>, using
         /// the provided <paramref name="bootstrapper"/>.
         /// Uses the specified configuration.
         /// </summary>
@@ -169,7 +169,7 @@
                 }
 
                 this.listener.Start();
-                
+
                 return true;
             }
             catch (HttpListenerException e)
@@ -236,7 +236,7 @@
 
         private Request ConvertRequestToNancyRequest(HttpListenerRequest request)
         {
-            var baseUri = this.baseUriList.FirstOrDefault(uri => uri.IsCaseInsensitiveBaseOf(request.Url));
+            var baseUri = this.GetBaseUri(request);
 
             if (baseUri == null)
             {
@@ -270,20 +270,47 @@
                 }
             }
 
+            // NOTE: For HTTP/2 we want fieldCount = 1,
+            // otherwise (HTTP/1.0 and HTTP/1.1) we want fieldCount = 2
+            var fieldCount = request.ProtocolVersion.Major == 2 ? 1 : 2;
+
+            var protocolVersion = string.Format("HTTP/{0}", request.ProtocolVersion.ToString(fieldCount));
+
             return new Request(
                 request.HttpMethod,
                 nancyUrl,
                 RequestStream.FromStream(request.InputStream, expectedRequestLength, false),
                 request.Headers.ToDictionary(), 
                 (request.RemoteEndPoint != null) ? request.RemoteEndPoint.Address.ToString() : null,
-                certificate);
+                certificate,
+                protocolVersion);
+        }
+
+        private Uri GetBaseUri(HttpListenerRequest request)
+        {
+            var result = this.baseUriList.FirstOrDefault(uri => uri.IsCaseInsensitiveBaseOf(request.Url));
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            if (!this.configuration.AllowAuthorityFallback)
+            {
+                return null;
+            }
+
+            return new Uri(request.Url.GetLeftPart(UriPartial.Authority));
         }
 
         private void ConvertNancyResponseToResponse(Response nancyResponse, HttpListenerResponse response)
         {
             foreach (var header in nancyResponse.Headers)
             {
-                response.AddHeader(header.Key, header.Value);
+                if (!IgnoredHeaders.IsIgnored(header.Key))
+                {
+                    response.AddHeader(header.Key, header.Value);
+                }
             }
 
             foreach (var nancyCookie in nancyResponse.Cookies)

@@ -77,15 +77,17 @@
             {
                 try
                 {
-                    if (value.GetType().IsAssignableFrom(typeof(T)))
+                    var valueType = value.GetType();
+                    var parseType = typeof(T);
+
+                    // check for direct cast
+                    if (valueType.IsAssignableFrom(parseType))
                     {
                         return (T)value;
                     }
 
-                    var TType = typeof (T);
-
                     var stringValue = value as string;
-                    if (TType == typeof (DateTime))
+                    if (parseType == typeof(DateTime))
                     {
                         DateTime result;
 
@@ -93,20 +95,25 @@
                         {
                             return (T)((object)result);
                         }
+
+                        return defaultValue;
                     }
-                    else if (stringValue != null)
+
+                    if (stringValue != null)
                     {
-                        var converter = TypeDescriptor.GetConverter(TType);
+                        var converter = TypeDescriptor.GetConverter(parseType);
 
                         if (converter.IsValid(stringValue))
                         {
                             return (T) converter.ConvertFromInvariantString(stringValue);
                         }
+
+                        return defaultValue;
                     }
-                    else if (TType == typeof (string))
-                    {
-                        return (T)Convert.ChangeType(value, TypeCode.String, CultureInfo.InvariantCulture);
-                    }
+
+                    var underlyingType = Nullable.GetUnderlyingType(parseType) ?? parseType;
+
+                    return (T)Convert.ChangeType(value, underlyingType, CultureInfo.InvariantCulture);
                 }
                 catch
                 {
@@ -119,6 +126,11 @@
 
         public static bool operator ==(DynamicDictionaryValue dynamicValue, object compareValue)
         {
+            if (ReferenceEquals(null, dynamicValue))
+            {
+                return false;
+            }
+
             if (dynamicValue.value == null && compareValue == null)
             {
                 return true;
@@ -351,6 +363,12 @@
             return Guid.Parse(dynamicValue.ToString());
         }
 
+        public static implicit operator Guid?(DynamicDictionaryValue dynamicValue)
+        {
+            return dynamicValue.HasValue
+                       ? (Guid)dynamicValue
+                       : default(Guid?);
+        }
         public static implicit operator DateTime(DynamicDictionaryValue dynamicValue)
         {
             if (dynamicValue.value is DateTime)

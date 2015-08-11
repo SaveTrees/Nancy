@@ -120,7 +120,7 @@ namespace Nancy.Testing
         }
 
         /// <summary>
-        /// Retreive a specific module instance from the container
+        /// Retrieve a specific module instance from the container
         /// </summary>
         /// <param name="container">Container to use</param>
         /// <param name="moduleType">Type of the module</param>
@@ -681,7 +681,8 @@ namespace Nancy.Testing
             {
                 this.bootstrapper.registeredInstances.Add(new InstanceRegistration(typeof(T), instance));
 
-                foreach (var interfaceType in GetSafeInterfaces(instance.GetType()))
+                var interfacesToRegisterBy = GetSafeInterfaces(instance.GetType()).Where(i => !i.Equals(typeof(T)));
+                foreach (var interfaceType in interfacesToRegisterBy)
                 {
                     this.bootstrapper.registeredInstances.Add(new InstanceRegistration(interfaceType, instance));
                 }

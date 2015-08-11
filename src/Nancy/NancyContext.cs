@@ -28,6 +28,7 @@ namespace Nancy
             this.Items = new Dictionary<string, object>();
             this.Trace = new DefaultRequestTrace();
             this.ViewBag = new DynamicDictionary();
+            this.NegotiationContext = new NegotiationContext();
 
             // TODO - potentially additional logic to lock to ip etc?
             this.ControlPanelEnabled = true;
@@ -105,7 +106,7 @@ namespace Nancy
         public CultureInfo Culture { get; set; }
 
         /// <summary>
-        /// Context of content negotiation (if relevent)
+        /// Context of content negotiation (if relevant)
         /// </summary>
         public NegotiationContext NegotiationContext { get; set; }
 

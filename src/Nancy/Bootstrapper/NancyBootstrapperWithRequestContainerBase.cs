@@ -31,12 +31,12 @@ namespace Nancy.Bootstrapper
         private IEnumerable<ModuleRegistration> moduleRegistrationTypeCache;
 
         /// <summary>
-        /// Stores the per-request type registations
+        /// Stores the per-request type registrations
         /// </summary>
         private TypeRegistration[] RequestScopedTypes { get; set; }
 
         /// <summary>
-        /// Stores the per-request collection registations
+        /// Stores the per-request collection registrations
         /// </summary>
         private CollectionTypeRegistration[] RequestScopedCollectionTypes { get; set; }
 
@@ -208,7 +208,7 @@ namespace Nancy.Bootstrapper
         protected abstract IEnumerable<INancyModule> GetAllModules(TContainer container);
 
         /// <summary>
-        /// Retreive a specific module instance from the container
+        /// Retrieve a specific module instance from the container
         /// </summary>
         /// <param name="container">Container to use</param>
         /// <param name="moduleType">Type of the module</param>

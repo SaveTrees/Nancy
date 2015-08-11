@@ -112,6 +112,10 @@
     <Compile Include="ModuleExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nancy.Cryptography\Nancy.Cryptography.csproj">
+      <Project>{E90334A6-BDD0-403A-B734-A93457D0E8F8}</Project>
+      <Name>Nancy.Cryptography</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nancy\Nancy.csproj">
       <Project>{34576216-0DCA-4B0F-A0DC-9075E75A676F}</Project>
       <Name>Nancy</Name>

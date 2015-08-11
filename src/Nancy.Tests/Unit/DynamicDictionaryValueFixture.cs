@@ -75,6 +75,20 @@
             result.ShouldBeTrue();
         }
 
+
+        [Fact]
+        public void Should_not_throw_null_reference_exception_if_value_is_null_using_equality_operator()
+        {
+            // Given
+            DynamicDictionaryValue value = null;
+
+            // When
+            var result = (value == 11);
+
+            // Then
+            result.ShouldBeFalse();
+        }
+
         [Fact]
         public void Should_return_false_when_value_is_not_null_and_compared_with_non_equal_value_using_equality_operator()
         {
@@ -895,6 +909,66 @@
 
             //Then
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Should_implicitly_convert_from_int_based_on_given_parameter_type_of_short()
+        {
+            //Given
+            const int expected = 42;
+            const short notExpected = 100;
+            dynamic value = new DynamicDictionaryValue (expected);
+
+            //When
+            int actual = (int)value.TryParse<short> (notExpected);
+
+            //Then
+            Assert.Equal (expected, actual);
+        }
+
+        [Fact]
+        public void Should_implicitly_convert_from_int_based_on_given_parameter_type_of_long()
+        {
+            //Given
+            const int expected = 42;
+            const long notExpected = 100;
+            dynamic value = new DynamicDictionaryValue (expected);
+
+            //When
+            int actual = (int)value.TryParse<long> (notExpected);
+
+            //Then
+            Assert.Equal (expected, actual);
+        }
+
+        [Fact]
+        public void Should_implicitly_convert_from_int_based_on_given_parameter_type_of_nullable_long()
+        {
+            //Given
+            const int expected = 42;
+            long? notExpected = 100;
+            dynamic value = new DynamicDictionaryValue (expected);
+
+            //When
+            int actual = (int)value.TryParse<long?> (notExpected);
+
+            //Then
+            Assert.Equal (expected, actual);
+        }
+
+        [Fact]
+        public void Should_implicitly_convert_from_datetime_based_on_given_parameter_type_of_nullable_datetime()
+        {
+            //Given
+            DateTime expected = DateTime.Parse ("13 December 2012");
+            DateTime? notExpected = expected.AddDays (10);
+            dynamic value = new DynamicDictionaryValue (expected);
+
+            //When
+            DateTime actual = (DateTime)value.TryParse<DateTime?> (notExpected);
+
+            //Then
+            Assert.Equal (expected, actual);
         }
 
         [Fact]

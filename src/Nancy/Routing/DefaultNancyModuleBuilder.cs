@@ -34,13 +34,11 @@
         /// <summary>
         /// Builds a fully configured <see cref="INancyModule"/> instance, based upon the provided <paramref name="module"/>.
         /// </summary>
-        /// <param name="module">The <see cref="INancyModule"/> that shoule be configured.</param>
+        /// <param name="module">The <see cref="INancyModule"/> that should be configured.</param>
         /// <param name="context">The current request context.</param>
         /// <returns>A fully configured <see cref="INancyModule"/> instance.</returns>
         public INancyModule BuildModule(INancyModule module, NancyContext context)
         {
-            CreateNegotiationContext(module, context);
-
             module.Context = context;
             module.Response = this.responseFormatterFactory.Create(context);
             module.ViewFactory = this.viewFactory;
@@ -48,16 +46,6 @@
             module.ValidatorLocator = this.validatorLocator;
 
             return module;
-        }
-
-        private static void CreateNegotiationContext(INancyModule module, NancyContext context)
-        {
-            // TODO - not sure if this should be here or not, but it'll do for now :)
-            context.NegotiationContext = new NegotiationContext
-                                             {
-                                                 ModuleName = module.GetModuleName(),
-                                                 ModulePath = module.ModulePath,
-                                             };
         }
     }
 }

@@ -63,7 +63,11 @@
         /// <returns>True if matching, false if not</returns>
         public bool Matches(MediaRangeParameters other)
         {
-            return this.parameters.OrderBy(p => p.Key).SequenceEqual(other.parameters.OrderBy(p => p.Key));
+            var p1 = this.parameters.OrderBy(p => p.Key);
+            var p2 = other.parameters.OrderBy(p => p.Key);
+            var equal = p1.SequenceEqual(p2);
+
+            return equal;
         }
 
         /// <summary>

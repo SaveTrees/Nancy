@@ -36,7 +36,7 @@
         /// <summary>
         /// Gets or sets the protocol that should be sent with the HTTP request.
         /// </summary>
-        /// <value>A <see cref="string"/> contains the the protocol that should be sent with the HTTP request..</value>
+        /// <value>A <see cref="string"/> contains the protocol that should be sent with the HTTP request..</value>
         string IBrowserContextValues.Protocol { get; set; }
 
         /// <summary>
@@ -249,7 +249,7 @@
                     String.Format("No certificates found in {0} {1} with a {2} that looks like \"{3}\"", storeLocation,
                                   storeName, findType, findBy));
             }
-            
+
             this.Values.ClientCertificate = certificatesFound[0];
         }
 

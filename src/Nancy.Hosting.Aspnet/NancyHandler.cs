@@ -13,7 +13,7 @@ namespace Nancy.Hosting.Aspnet
     /// Bridges the communication between Nancy and ASP.NET based hosting.
     /// </summary>
     public class NancyHandler
-    {        
+    {
         private readonly INancyEngine engine;
 
         /// <summary>
@@ -94,14 +94,23 @@ namespace Nancy.Hosting.Aspnet
             {
                 certificate = context.Request.ClientCertificate.Certificate;
             }
-                
-            return new Request(
-                context.Request.HttpMethod.ToUpperInvariant(),
-                nancyUrl,
-                RequestStream.FromStream(context.Request.InputStream, expectedRequestLength, true),
-                incomingHeaders,
-                context.Request.UserHostAddress,
-                certificate);
+
+            RequestStream body = null;
+
+            if (expectedRequestLength != 0)
+            {
+                body = RequestStream.FromStream(context.Request.InputStream, expectedRequestLength, true);
+            }
+
+            var protocolVersion = context.Request.ServerVariables["HTTP_VERSION"];
+
+            return new Request(context.Request.HttpMethod.ToUpperInvariant(), 
+                nancyUrl, 
+                body, 
+                incomingHeaders, 
+                context.Request.UserHostAddress, 
+                certificate,
+                protocolVersion);
         }
 
         private static long GetExpectedRequestLength(IDictionary<string, IEnumerable<string>> incomingHeaders)
@@ -142,12 +151,13 @@ namespace Nancy.Hosting.Aspnet
                 context.Response.ContentType = response.ContentType;
             }
 
+            context.Response.StatusCode = (int) response.StatusCode;
+
             if (response.ReasonPhrase != null)
             {
                 context.Response.StatusDescription = response.ReasonPhrase;
             }
 
-            context.Response.StatusCode = (int)response.StatusCode;
             response.Contents.Invoke(context.Response.OutputStream);
         }
 

@@ -244,6 +244,9 @@
 
             this.ConfigureApplicationContainer(this.ApplicationContainer);
 
+            // We need to call this to fix an issue with assemblies that are referenced by DI not being loaded
+            AppDomainAssemblyTypeScanner.UpdateTypes();
+
             var typeRegistrations = this.InternalConfiguration.GetTypeRegistations()
                                         .Concat(this.GetAdditionalTypes());
 
@@ -559,7 +562,7 @@
         /// Gets any additional instance registrations that need to
         /// be registered into the container
         /// </summary>
-        /// <returns>Collection of InstanceRegistation types</returns>
+        /// <returns>Collection of InstanceRegistration types</returns>
         private IEnumerable<InstanceRegistration> GetAdditionalInstances()
         {
             return new[] {
