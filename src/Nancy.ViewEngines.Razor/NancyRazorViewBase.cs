@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.IO;
     using System.Text;
+    using Microsoft.CSharp.RuntimeBinder;
     using Nancy.Helpers;
 
     /// <summary>
@@ -389,14 +390,27 @@
             this.childBody = body ?? string.Empty;
             this.childSections = sectionContents ?? new Dictionary<string, string>();
 
-            try
-            {
-                this.Execute();
-            }
-            catch (NullReferenceException e)
-            {
-                throw new ViewRenderException("Unable to render the view.  Most likely the Model, or a property on the Model, is null", e);
-            }
+	        try
+	        {
+		        this.Execute();
+	        }
+	        catch (NullReferenceException e)
+	        {
+#if DEBUG
+		        throw;
+#else
+				throw new ViewRenderException("Unable to render the view.  Most likely the Model, or a property on the Model, is null", e);
+#endif
+
+	        }
+	        catch (Exception e)
+	        {
+#if DEBUG
+				throw;
+#else
+				throw new ViewRenderException("Unable to render the view.", e);
+#endif
+			}
 
             this.Body = this.contents.ToString();
 
