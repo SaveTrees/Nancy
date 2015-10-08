@@ -30,33 +30,28 @@ namespace Nancy.Responses.Negotiation
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Matched the media type with another media type.
         /// </summary>
         /// <param name="other">The media type that should be matched against.</param>
         /// <returns><see langword="true" /> if the media types match, otherwise <see langword="false" />.</returns>
         public bool Matches(MediaType other)
         {
-<<<<<<< HEAD
-	        return this.IsWildcard ||
-				   other.IsWildcard ||
-                   MatchesExactly(other);
-=======
             return this.IsWildcard ||
                    other.IsWildcard ||
-                   this.type.Equals(other.type, StringComparison.OrdinalIgnoreCase);
->>>>>>> 486a584a0be1ab55e2c85d0c8da2953e52946773
+                   this.type.Equals(other.type, StringComparison.OrdinalIgnoreCase) ||
+                   MatchesExactly(other);
         }
 
-		/// <summary>
-		/// Matches the media type with another media type exactly.
-		/// </summary>
-		/// <param name="other">The media type that should be matched against.</param>
-		/// <returns><see langword="true" /> if the media types match, otherwise <see langword="false" />.</returns>
-		public bool MatchesExactly(MediaType other)
-		{
-			return this.type.Equals(other.type, StringComparison.InvariantCultureIgnoreCase);
-		}
+        /// <summary>
+        /// Matches the media type with another media type exactly.
+        /// </summary>
+        /// <param name="other">The media type that should be matched against.</param>
+        /// <returns><see langword="true" /> if the media types match, otherwise <see langword="false" />.</returns>
+        public bool MatchesExactly(MediaType other)
+        {
+            return this.type.Equals(other.type, StringComparison.InvariantCultureIgnoreCase);
+        }
 
         public static implicit operator MediaType(string inputString)
         {
