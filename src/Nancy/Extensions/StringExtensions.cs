@@ -19,7 +19,7 @@ namespace Nancy.Extensions
         /// <value>A <see cref="Regex"/> object.</value>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private static readonly Regex ParameterExpression =
-            new Regex(@"{(?<name>[A-Za-z0-9_]*)(?:\?(?<default>[A-Za-z0-9_]*))?}", RegexOptions.Compiled);
+            new Regex(@"{(?<name>[A-Za-z0-9_]*)(?:\?(?<default>[A-Za-z0-9_-]*))?}", RegexOptions.Compiled);
 
         /// <summary>
         /// Extracts information about the parameters in the <paramref name="segment"/>.
@@ -33,15 +33,9 @@ namespace Nancy.Extensions
 
             var nameMatch = matches
                 .Cast<Match>()
-                .Select(x => x)
                 .ToList();
 
-            if (nameMatch.Any())
-            {
-                return nameMatch.Select(x => new ParameterSegmentInformation(x.Groups["name"].Value, x.Groups["default"].Value, x.Groups["default"].Success));
-            }
-
-            throw new FormatException("The segment did not contain any parameters.");
+            return nameMatch.Select(x => new ParameterSegmentInformation(x.Groups["name"].Value, x.Groups["default"].Value, x.Groups["default"].Success));
         }
 
         /// <summary>

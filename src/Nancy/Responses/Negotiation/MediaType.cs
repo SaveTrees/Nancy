@@ -37,9 +37,15 @@ namespace Nancy.Responses.Negotiation
         /// <returns><see langword="true" /> if the media types match, otherwise <see langword="false" />.</returns>
         public bool Matches(MediaType other)
         {
+<<<<<<< HEAD
 	        return this.IsWildcard ||
 				   other.IsWildcard ||
                    MatchesExactly(other);
+=======
+            return this.IsWildcard ||
+                   other.IsWildcard ||
+                   this.type.Equals(other.type, StringComparison.OrdinalIgnoreCase);
+>>>>>>> 486a584a0be1ab55e2c85d0c8da2953e52946773
         }
 
 		/// <summary>

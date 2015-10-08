@@ -26,4 +26,5 @@ src/_NCrunch_Nancy/
 Thumbs.db
 .idea
 *.GhostDoc.xml
-
+Gemfile.lock
+.vs/

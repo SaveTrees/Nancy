@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Fakes\PersonWithAgeField.cs" />
     <Compile Include="Fakes\StructModel.cs" />
+    <Compile Include="Helpers\ExceptionExtensionsFixture.cs" />
     <Compile Include="NoAppStartupsFixture.cs" />
     <Compile Include="Extensions\ResponseExtensions.cs" />
     <Compile Include="Fakes\FakeNancyModuleNoRoutes.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Fakes\Person.cs" />
     <Compile Include="Fakes\ViewModel.cs" />
     <Compile Include="Helpers\CacheHelpersFixture.cs" />
+    <Compile Include="Responses\MaterialisingResponseFixture.cs" />
     <Compile Include="Unit\Bootstrapper\BootstrapperLocatorFixture.cs" />
     <Compile Include="Unit\Bootstrapper\CollectionTypeRegistrationFixture.cs" />
     <Compile Include="Unit\Bootstrapper\InstanceRegistrationFixture.cs" />
