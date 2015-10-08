@@ -35,7 +35,12 @@
         /// </summary>
         public const string RequestEnvironmentKey = "OWIN_REQUEST_ENVIRONMENT";
 
-        /// <summary>
+		/// <summary>
+		/// The server user key
+		/// </summary>
+		public const string ServerUser = "server.User";
+		
+		/// <summary>
         /// Use Nancy in an OWIN pipeline
         /// </summary>
         /// <param name="configuration">A delegate to configure the <see cref="NancyOptions"/>.</param>
