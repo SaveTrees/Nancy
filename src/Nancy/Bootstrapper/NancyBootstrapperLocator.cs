@@ -81,7 +81,7 @@
 
         private static string GetMultipleBootstrappersMessage(IEnumerable<Type> customBootstrappers)
         {
-            var bootstrapperNames = customBootstrappers.Select(x => string.Concat(" - ", x.FullName));
+            var bootstrapperNames = customBootstrappers.Select(x => string.Concat(" - ", x.AssemblyQualifiedName));
 
             var bootstrapperList = string.Join(Environment.NewLine, bootstrapperNames);
 

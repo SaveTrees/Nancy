@@ -38,7 +38,7 @@ namespace Nancy.Bootstrapper
             if (incompatibleTypes.Any())
             {
                 var incompatibleTypeNames =
-                    string.Join(", ", incompatibleTypes.Select(type => type.FullName));
+                    string.Join(", ", incompatibleTypes.Select(type => type.AssemblyQualifiedName));
 
                 var errorMessage =
                     string.Format("{0} must implement {1} inorder to be registered by {2}", incompatibleTypeNames, this.RegistrationType.FullName, this.GetType().Name);

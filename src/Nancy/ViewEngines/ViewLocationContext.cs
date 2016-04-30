@@ -1,6 +1,8 @@
 namespace Nancy.ViewEngines
 {
-    /// <summary>
+	using Diagnostics;
+
+	/// <summary>
     /// The context for which a view is being located.
     /// </summary>
     public class ViewLocationContext
@@ -21,5 +23,10 @@ namespace Nancy.ViewEngines
         /// The request/response context
         /// </summary>
         public NancyContext Context{ get; set; }
-    }
+
+		/// <summary>
+		/// The tracelog
+		/// </summary>
+		public ITraceLog TraceLog { get; set; }
+	}
 }

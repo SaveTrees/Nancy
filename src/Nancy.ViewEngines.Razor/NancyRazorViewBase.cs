@@ -19,7 +19,7 @@
     /// Base class for nancy razor views.
     /// </summary>
     /// <typeparam name="TModel">Model type</typeparam>
-    public abstract class NancyRazorViewBase<TModel> : INancyRazorView
+    public abstract class NancyRazorViewBase<TModel> : INancyRazorView<TModel>, INancyRazorView
     {
         private readonly StringBuilder contents;
         private string childBody;
@@ -48,7 +48,7 @@
         /// <summary>
         /// Gets the body.
         /// </summary>
-        public String Body { get; private set; }
+        public string Body { get; private set; }
 
         /// <summary>
         /// Gets or sets the section contents.
@@ -123,7 +123,7 @@
         /// <param name="engine">The engine.</param>
         /// <param name="renderContext">The render context.</param>
         /// <param name="model">The model.</param>
-        public virtual void Initialize(RazorViewEngine engine, IRenderContext renderContext, object model)
+        public virtual void Initialize(IRazorViewEngine engine, IRenderContext renderContext, object model)
         {
             this.RenderContext = renderContext;
             this.Html = new HtmlHelpers<TModel>(engine, renderContext, (TModel)model);
@@ -390,27 +390,27 @@
             this.childBody = body ?? string.Empty;
             this.childSections = sectionContents ?? new Dictionary<string, string>();
 
-	        try
-	        {
-		        this.Execute();
-	        }
-	        catch (NullReferenceException e)
-	        {
+            try
+            {
+                this.Execute();
+            }
+            catch (NullReferenceException e)
+            {
 #if DEBUG
-		        throw;
+                throw;
 #else
-				throw new ViewRenderException("Unable to render the view.  Most likely the Model, or a property on the Model, is null", e);
+                throw new ViewRenderException("Unable to render the view.  Most likely the Model, or a property on the Model, is null", e);
 #endif
 
-	        }
-	        catch (Exception e)
-	        {
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-				throw;
+                throw;
 #else
-				throw new ViewRenderException("Unable to render the view.", e);
+                throw new ViewRenderException("Unable to render the view.", e);
 #endif
-			}
+            }
 
             this.Body = this.contents.ToString();
 

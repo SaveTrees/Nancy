@@ -131,15 +131,15 @@ namespace Nancy.Json
             set { this._retainCasing = value; }
         }
 
-        public T ConvertToType<T>(object obj)
+        public T ConvertToType<T>(object obj, T instance)
         {
             if (obj == null)
                 return default(T);
 
-            return (T)ConvertToType(typeof(T), obj);
+            return (T)ConvertToType(typeof(T), obj, instance);
         }
 
-        internal object ConvertToType(Type type, object obj)
+        internal object ConvertToType(Type type, object obj, object instance)
         {
             var primitiveConverter = GetPrimitiveConverter(type);
 
@@ -162,7 +162,7 @@ namespace Nancy.Json
                             type, this);
                 }
 
-                return ConvertToObject((IDictionary<string, object>)obj, type);
+                return ConvertToObject((IDictionary<string, object>)obj, type, instance);
             }
             if (obj is ArrayList)
                 return ConvertToList((ArrayList)obj, type);
@@ -217,9 +217,9 @@ namespace Nancy.Json
             return Convert.ChangeType(obj, type);
         }
 
-        public T Deserialize<T>(string input)
+        public T Deserialize<T>(string input, T instance)
         {
-            return ConvertToType<T>(DeserializeObjectInternal(input));
+            return ConvertToType<T>(DeserializeObjectInternal(input), instance);
         }
 
         static object Evaluate(object value)
@@ -312,7 +312,7 @@ namespace Nancy.Json
             return list;
         }
 
-        object ConvertToObject(IDictionary<string, object> dict, Type type)
+        object ConvertToObject(IDictionary<string, object> dict, Type type, object instance)
         {
             if (_typeResolver != null)
             {
@@ -353,7 +353,7 @@ namespace Nancy.Json
             else if (type.IsAssignableFrom(typeof(IDictionary)))
                 type = typeof(Dictionary<string, object>);
 
-            object target = Activator.CreateInstance(type, true);
+            object target = instance ?? Activator.CreateInstance(type, true);
 
             foreach (KeyValuePair<string, object> entry in dict)
             {
@@ -404,7 +404,8 @@ namespace Nancy.Json
                         throw new InvalidOperationException("Unable to deserialize a member, as its type is an unknown interface.");
                 }
 
-                ReflectionUtils.SetMemberValue(member, target, ConvertToType(memberType, value));
+	            var convertedValue = ConvertToType(memberType, value, instance);
+	            ReflectionUtils.SetMemberValue(member, target, convertedValue);
             }
 
             return target;

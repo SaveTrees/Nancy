@@ -531,7 +531,7 @@ namespace Nancy.TinyIoc
         private const string ERROR_TEXT = "Unable to resolve type: {0}";
 
         public TinyIoCResolutionException(Type type)
-            : base(String.Format(ERROR_TEXT, type.FullName))
+            : base(String.Format(ERROR_TEXT, type.AssemblyQualifiedName))
         {
         }
 
@@ -572,7 +572,7 @@ namespace Nancy.TinyIoc
         }
 
         public TinyIoCRegistrationException(Type registerType, Type implementationType)
-            : base(String.Format(GENERIC_CONSTRAINT_ERROR_TEXT, registerType.FullName, implementationType.FullName))
+            : base(String.Format(GENERIC_CONSTRAINT_ERROR_TEXT, registerType.FullName, implementationType.AssemblyQualifiedName))
         {
         }
 
@@ -587,7 +587,7 @@ namespace Nancy.TinyIoc
         private const string ERROR_TEXT = "Unable to instantiate {0} - referenced object has been reclaimed";
 
         public TinyIoCWeakReferenceException(Type type)
-            : base(String.Format(ERROR_TEXT, type.FullName))
+            : base(String.Format(ERROR_TEXT, type.AssemblyQualifiedName))
         {
         }
 
@@ -602,7 +602,7 @@ namespace Nancy.TinyIoc
         private const string ERROR_TEXT = "Unable to resolve constructor for {0} using provided Expression.";
 
         public TinyIoCConstructorResolutionException(Type type)
-            : base(String.Format(ERROR_TEXT, type.FullName))
+            : base(String.Format(ERROR_TEXT, type.AssemblyQualifiedName))
         {
         }
 
@@ -1448,7 +1448,7 @@ namespace Nancy.TinyIoc
 //#else
                 if (!registrationType.IsAssignableFrom(type))
 //#endif
-					throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.FullName));
+					throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.AssemblyQualifiedName));
 
             if (implementationTypes.Count() != implementationTypes.Distinct().Count())
             {
@@ -1467,7 +1467,7 @@ namespace Nancy.TinyIoc
 
             foreach (var type in implementationTypes)
             {
-                registerOptions.Add(Register(registrationType, type, type.FullName));
+                registerOptions.Add(Register(registrationType, type, type.AssemblyQualifiedName));
             }
 
             return new MultiRegisterOptions(registerOptions);
@@ -1972,7 +1972,7 @@ namespace Nancy.TinyIoc
         /// <summary>
         /// Attemps to resolve a type using the default options
         /// </summary>
-        /// <param name="ResolveType">Type to resolve</param>
+        /// <param name="resolveType">Type to resolve</param>
         /// <param name="resolvedType">Resolved type or default if resolve fails</param>
         /// <returns>True if resolved sucessfully, false otherwise</returns>
         public bool TryResolve(Type resolveType, out object resolvedType)
@@ -1992,7 +1992,7 @@ namespace Nancy.TinyIoc
         /// <summary>
         /// Attemps to resolve a type using the given options
         /// </summary>
-        /// <param name="ResolveType">Type to resolve</param>
+        /// <param name="resolveType">Type to resolve</param>
         /// <param name="options">Resolution options</param>
         /// <param name="resolvedType">Resolved type or default if resolve fails</param>
         /// <returns>True if resolved sucessfully, false otherwise</returns>
@@ -3089,15 +3089,19 @@ namespace Nancy.TinyIoc
             {
                 var types = assemblies.SelectMany(a => a.SafeGetTypes()).Where(t => !IsIgnoredType(t, registrationPredicate)).ToList();
 
-                var concreteTypes = from type in types
-                                    where type.IsClass() && (type.IsAbstract() == false) && (type != this.GetType() && (type.DeclaringType != this.GetType()) && (!type.IsGenericTypeDefinition()))
-                                    select type;
+                var concreteTypes = types
+					.Where(type => !type.IsGenericTypeDefinition())
+					.Where(type => type.IsClass())
+					.Where(type => !type.IsAbstract())
+					.Where(type => type != this.GetType())
+					.Where(type => type.DeclaringType != this.GetType())
+					.ToList();
 
                 foreach (var type in concreteTypes)
                 {
                     try
                     {
-                        RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
+						RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
                     }
                     catch (MethodAccessException)
                     {
@@ -3105,18 +3109,14 @@ namespace Nancy.TinyIoc
                     }
                 }
 
-                var abstractInterfaceTypes = from type in types
-                                             where ((type.IsInterface() || type.IsAbstract()) && (type.DeclaringType != this.GetType()) && (!type.IsGenericTypeDefinition()))
-                                             select type;
+                var abstractInterfaceTypes = types.Where(type => (type.IsInterface() || type.IsAbstract()) && (type.DeclaringType != this.GetType()) && !type.IsGenericTypeDefinition());
 
                 foreach (var type in abstractInterfaceTypes)
                 {
                     var localType = type;
-                    var implementations = from implementationType in concreteTypes
-                                          where localType.IsAssignableFrom(implementationType)
-                                          select implementationType;
+                    var implementations = concreteTypes.Where(implementationType => localType.IsAssignableFrom(implementationType)).ToList();
 
-                    if (implementations.Count() > 1)
+                    if (implementations.Count > 1)
                     {
                         if (duplicateAction == DuplicateImplementationActions.Fail)
                             throw new TinyIoCAutoRegistrationException(type, implementations);

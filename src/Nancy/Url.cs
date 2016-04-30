@@ -102,16 +102,20 @@ namespace Nancy
         /// <summary>
         /// Gets the domain part of the request
         /// </summary>
-        public string SiteBase
+        public Url SiteBase
         {
             get
             {
-                return new StringBuilder()
+                var url = new StringBuilder()
                     .Append(this.Scheme)
                     .Append(Uri.SchemeDelimiter)
                     .Append(GetHostName(this.HostName))
                     .Append(GetPort(this.Port))
+                    .Append('/')
                     .ToString();
+
+                return url;
+
             }
         }
 

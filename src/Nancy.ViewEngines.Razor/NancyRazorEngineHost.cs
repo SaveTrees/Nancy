@@ -1,5 +1,6 @@
 ﻿namespace Nancy.ViewEngines.Razor
 {
+    using System;
     using System.Web.Razor;
     using System.Web.Razor.Generator;
     using System.Web.Razor.Parser;
@@ -17,10 +18,16 @@
         /// Initializes a new instance of the <see cref="NancyRazorEngineHost"/> class.
         /// </summary>
         /// <param name="language">The language.</param>
-        public NancyRazorEngineHost(RazorCodeLanguage language)
+        /// <param name="defaultPageBaseType"></param>
+        public NancyRazorEngineHost(RazorCodeLanguage language, Type defaultPageBaseType = null)
             : base(language)
         {
-            this.DefaultBaseClass = typeof (NancyRazorViewBase).FullName;
+            if (defaultPageBaseType == null)
+            {
+                defaultPageBaseType = typeof (NancyRazorViewBase);
+            }
+
+            this.DefaultBaseClass = defaultPageBaseType.FullName;
             this.DefaultNamespace = "RazorOutput";
             this.DefaultClassName = "RazorView";
 

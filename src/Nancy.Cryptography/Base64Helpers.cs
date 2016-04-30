@@ -2,6 +2,9 @@ namespace Nancy.Cryptography
 {
     using System;
 
+    /// <summary>
+    /// Helpers for Base64 encoding
+    /// </summary>
     public static class Base64Helpers
     {
         /// <summary>

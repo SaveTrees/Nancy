@@ -18,7 +18,7 @@
     /// <summary>
     /// View engine for rendering razor views.
     /// </summary>
-    public class RazorViewEngine : IViewEngine, IDisposable
+    public class RazorViewEngine : IRazorViewEngine, IDisposable
     {
         private readonly IRazorConfiguration razorConfiguration;
         private readonly IEnumerable<IRazorViewRenderer> viewRenderers;
@@ -38,12 +38,13 @@
         /// Initializes a new instance of the <see cref="RazorViewEngine"/> class.
         /// </summary>
         /// <param name="configuration">The <see cref="IRazorConfiguration"/> that should be used by the engine.</param>
-        public RazorViewEngine(IRazorConfiguration configuration)
+        /// <param name="defaultPageBaseType"></param>
+        public RazorViewEngine(IRazorConfiguration configuration, Type defaultPageBaseType = null)
         {
             this.viewRenderers = new List<IRazorViewRenderer>
             {
-                new CSharp.CSharpRazorViewRenderer(),
-                new VisualBasic.VisualBasicRazorViewRenderer()
+                new CSharp.CSharpRazorViewRenderer(defaultPageBaseType),
+                new VisualBasic.VisualBasicRazorViewRenderer(defaultPageBaseType)
             };
 
             this.razorConfiguration = configuration;
@@ -71,7 +72,12 @@
         /// <returns>A response.</returns>
         public Response RenderView(ViewLocationResult viewLocationResult, dynamic model, IRenderContext renderContext)
         {
-            return RenderView(viewLocationResult, model, renderContext, false);
+            var response = new HtmlResponse
+                           {
+                               Contents = RenderView(viewLocationResult, model, renderContext, false)
+                           };
+
+            return response;
         }
 
         /// <summary>
@@ -82,7 +88,7 @@
         /// <param name="renderContext">The render context.</param>
         /// <param name="isPartial">Used by HtmlHelpers to declare a view as partial</param>
         /// <returns>A response.</returns>
-        public Response RenderView(ViewLocationResult viewLocationResult, dynamic model, IRenderContext renderContext, bool isPartial)
+        public Action<Stream> RenderView(ViewLocationResult viewLocationResult, dynamic model, IRenderContext renderContext, bool isPartial)
         {
             Assembly referencingAssembly = null;
 
@@ -95,14 +101,12 @@
                 }
             }
 
-            var response = new HtmlResponse();
-
-            response.Contents = stream =>
+            return stream =>
             {
-                var writer =
-                    new StreamWriter(stream);
+                var writer = new StreamWriter(stream);
 
-                var view = this.GetViewInstance(viewLocationResult, renderContext, referencingAssembly, model);
+                var view = (INancyRazorView)this.GetViewInstance(viewLocationResult, renderContext, referencingAssembly, model);
+                InitializeView(view, renderContext, model);
 
                 view.ExecuteView(null, null);
 
@@ -123,7 +127,8 @@
                         throw new InvalidOperationException("Unable to locate layout: " + layout);
                     }
 
-                    view = this.GetViewInstance(viewLocation, renderContext, referencingAssembly, model);
+                    view = (INancyRazorView)this.GetViewInstance(viewLocation, renderContext, referencingAssembly, model);
+                    InitializeView(view, renderContext, model);
 
                     view.ExecuteView(body, sectionContents);
 
@@ -138,8 +143,6 @@
                 writer.Write(body);
                 writer.Flush();
             };
-
-            return response;
         }
 
         private string GetViewStartLayout(dynamic model, IRenderContext renderContext, Assembly referencingAssembly, bool isPartial)
@@ -149,23 +152,24 @@
                 return string.Empty;
             }
 
-            var view = renderContext.LocateView("_ViewStart", model);
+            var viewLocationResult = renderContext.LocateView("_ViewStart", model);
 
-            if (view == null)
+            if (viewLocationResult == null)
             {
                 return string.Empty;
             }
 
-            if (!this.Extensions.Any(x => x.Equals(view.Extension, StringComparison.OrdinalIgnoreCase)))
+            if (!this.Extensions.Any(x => x.Equals(viewLocationResult.Extension, StringComparison.OrdinalIgnoreCase)))
             {
                 return string.Empty;
             }
 
-            var viewInstance = GetViewInstance(view, renderContext, referencingAssembly, model);
+            var view = (INancyRazorView)GetViewInstance(viewLocationResult, renderContext, referencingAssembly, model);
+            InitializeView(view, renderContext, model);
 
-            viewInstance.ExecuteView(null, null);
+            view.ExecuteView(null, null);
 
-            return viewInstance.Layout ?? string.Empty;
+            return view.Layout ?? string.Empty;
         }
 
         private void AddDefaultNameSpaces(RazorEngineHost engineHost)
@@ -476,14 +480,22 @@
 
         private INancyRazorView GetViewInstance(ViewLocationResult viewLocationResult, IRenderContext renderContext, Assembly referencingAssembly, dynamic model)
         {
-            var modelType = (model == null) ? typeof(object) : model.GetType();
+            var modelType = model == null ? typeof(object) : model.GetType();
 
-            var view =
-                this.GetOrCompileView(viewLocationResult, renderContext, referencingAssembly, modelType);
-
-            view.Initialize(this, renderContext, model);
+            var view = this.GetOrCompileView(viewLocationResult, renderContext, referencingAssembly, modelType);
 
             return view;
+        }
+
+        /// <summary>
+        /// Custom view initialization.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="renderContext"></param>
+        /// <param name="model"></param>
+        public virtual void InitializeView(INancyRazorView view, IRenderContext renderContext, object model)
+        {
+            view.Initialize(this, renderContext, model);
         }
 
         /// <summary>

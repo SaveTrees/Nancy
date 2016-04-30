@@ -45,7 +45,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpRazorViewRenderer"/> class.
         /// </summary>
-        public CSharpRazorViewRenderer()
+        public CSharpRazorViewRenderer(Type defaultPageBaseType = null)
         {
             this.Assemblies = new List<string>
             {
@@ -56,7 +56,7 @@
 
             this.Provider = new CSharpCodeProvider();
 
-            this.Host = new NancyRazorEngineHost(new CSharpRazorCodeLanguage());
+            this.Host = new NancyRazorEngineHost(new CSharpRazorCodeLanguage(), defaultPageBaseType);
 
             this.Host.NamespaceImports.Add("Microsoft.CSharp.RuntimeBinder");
         }

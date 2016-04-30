@@ -43,7 +43,7 @@ namespace Nancy.ModelBinding.DefaultBodyDeserializers
 
             var genericDeserializeMethod = this.deserializeMethod.MakeGenericMethod(new[] { context.DestinationType });
 
-            var deserializedObject = genericDeserializeMethod.Invoke(serializer, new[] { bodyText });
+            var deserializedObject = genericDeserializeMethod.Invoke(serializer, new[] { bodyText, context.Model });
 
             return deserializedObject;
         }

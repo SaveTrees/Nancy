@@ -5,11 +5,11 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Diagnostics;
+    using Nancy.Conventions;
     using Nancy.Cryptography;
     using Nancy.ModelBinding;
-    using Nancy.Conventions;
-    using Nancy.ViewEngines;
     using Nancy.Validation;
+    using Nancy.ViewEngines;
 
     /// <summary>
     /// Nancy bootstrapper base class
@@ -228,6 +228,11 @@
         /// </summary>
         public void Initialise()
         {
+	        if (this.initialised)
+	        {
+		        return;
+	        }
+
             if (this.InternalConfiguration == null)
             {
                 throw new InvalidOperationException("Configuration cannot be null");

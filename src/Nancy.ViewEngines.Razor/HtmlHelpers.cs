@@ -16,7 +16,7 @@
         /// <param name="engine">The razor view engine instance that the helpers are being used by.</param>
         /// <param name="renderContext">The <see cref="IRenderContext"/> that the helper are being used by.</param>
         /// <param name="model">The model that is used by the page where the helpers are invoked.</param>
-        public HtmlHelpers(RazorViewEngine engine, IRenderContext renderContext, TModel model)
+        public HtmlHelpers(IRazorViewEngine engine, IRenderContext renderContext, TModel model)
         {
             this.Engine = engine;
             this.RenderContext = renderContext;
@@ -33,7 +33,7 @@
         /// The engine that is currently rendering the view.
         /// </summary>
         /// <value>A <see cref="RazorViewEngine"/> instance.</value>
-        public RazorViewEngine Engine { get; set; }
+        public IRazorViewEngine Engine { get; set; }
 
         /// <summary>
         /// The context of the current render operation.
@@ -59,18 +59,26 @@
         /// <returns>An <see cref="IHtmlString"/> representation of the partial.</returns>
         public IHtmlString Partial(string viewName, dynamic modelForPartial)
         {
-            var view = this.RenderContext.LocateView(viewName, modelForPartial);
+	        try
+	        {
+		        var view = this.RenderContext.LocateView(viewName, modelForPartial);
 
-            var response = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
-            Action<Stream> action = response.Contents;
-            var mem = new MemoryStream();
+		        //var response = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
+		        var action = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
+		        //Action<Stream> action = response.Contents;
+		        var mem = new MemoryStream();
 
-            action.Invoke(mem);
-            mem.Position = 0;
+		        action.Invoke(mem);
+		        mem.Position = 0;
 
-            var reader = new StreamReader(mem);
+		        var reader = new StreamReader(mem);
 
-            return new NonEncodedHtmlString(reader.ReadToEnd());
+		        return new NonEncodedHtmlString(reader.ReadToEnd());
+	        }
+	        catch (Exception exception)
+	        {
+		        throw new Exception("There was an error rendering the partial view '" + viewName + "'", exception);
+	        }
         }
 
         /// <summary>

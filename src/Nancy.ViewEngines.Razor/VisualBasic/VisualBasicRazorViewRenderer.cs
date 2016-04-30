@@ -43,7 +43,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="VisualBasicRazorViewRenderer"/> class.
         /// </summary>
-        public VisualBasicRazorViewRenderer()
+        public VisualBasicRazorViewRenderer(Type defaultPageBaseType = null)
         {
             this.ModelCodeGenerator = typeof(VisualBasicModelCodeGenerator);
 
@@ -51,7 +51,7 @@
 
             this.Provider = new VBCodeProvider();
 
-            this.Host = new NancyRazorEngineHost(new VBRazorCodeLanguage());
+            this.Host = new NancyRazorEngineHost(new VBRazorCodeLanguage(), defaultPageBaseType);
         }
 
         /// <summary>

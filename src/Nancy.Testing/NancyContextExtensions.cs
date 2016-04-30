@@ -62,7 +62,7 @@ namespace Nancy.Testing
                     contentsStream.Position = 0;
                     using (var contents = new StreamReader(contentsStream))
                     {
-                        var model = serializer.Deserialize<TModel>(contents.ReadToEnd());
+                        var model = serializer.Deserialize(contents.ReadToEnd(), default(TModel));
                         return model;
                     }
                 }

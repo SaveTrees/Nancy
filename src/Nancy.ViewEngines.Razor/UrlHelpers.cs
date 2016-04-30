@@ -11,7 +11,7 @@ namespace Nancy.ViewEngines.Razor
         /// </summary>
         /// <param name="razorViewEngine">The razor view engine.</param>
         /// <param name="renderContext">The render context.</param>
-        public UrlHelpers(RazorViewEngine razorViewEngine, IRenderContext renderContext)
+        public UrlHelpers(IRazorViewEngine razorViewEngine, IRenderContext renderContext)
         {
             this.RazorViewEngine = razorViewEngine;
             this.RenderContext = renderContext;
@@ -21,7 +21,7 @@ namespace Nancy.ViewEngines.Razor
         /// The engine that is currently rendering the view.
         /// </summary>
         /// <value>A <see cref="RazorViewEngine"/> instance.</value>
-        public RazorViewEngine RazorViewEngine { get; set; }
+        public IRazorViewEngine RazorViewEngine { get; set; }
 
         /// <summary>
         /// The context of the current render operation.

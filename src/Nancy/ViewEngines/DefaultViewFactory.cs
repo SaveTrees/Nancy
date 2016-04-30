@@ -87,7 +87,7 @@
                 throw new ViewNotFoundException(viewName, this.viewEngineExtensions, this.GetInspectedLocations(viewName, model, viewLocationContext), this.rootPathProvider);
             }
 
-            viewLocationContext.Context.Trace.TraceLog.WriteLog(x => x.AppendLine(string.Concat("[DefaultViewFactory] Rendering view with view engine ", resolvedViewEngine.GetType().FullName)));
+            viewLocationContext.Context.Trace.TraceLog.WriteLog(x => x.AppendLine(string.Concat("[DefaultViewFactory] Rendering view with view engine ", resolvedViewEngine.GetType().AssemblyQualifiedName)));
 
             return SafeInvokeViewEngine(
                 resolvedViewEngine,
@@ -158,7 +158,7 @@
 
         private static string GetViewNameFromModel(dynamic model, NancyContext context)
         {
-            context.Trace.TraceLog.WriteLog(x => x.AppendLine(string.Concat("[DefaultViewFactory] Extracting view name from model of type ", model.GetType().FullName)));
+            context.Trace.TraceLog.WriteLog(x => x.AppendLine(string.Concat("[DefaultViewFactory] Extracting view name from model of type ", model.GetType().AssemblyQualifiedName)));
 
             return Regex.Replace(model.GetType().Name, "Model$", string.Empty);
         }

@@ -9,7 +9,7 @@ namespace Nancy.Cryptography
         /// Generate a sequence of bytes
         /// </summary>
         /// <param name="count">Number of bytes to return</param>
-        /// <returns>Array <see cref="count"/> bytes</returns>
+        /// <returns>Returns an array of <paramref name="count"/> bytes</returns>
         byte[] GetBytes(int count);
     }
 }
