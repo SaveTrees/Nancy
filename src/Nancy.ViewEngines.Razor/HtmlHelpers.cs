@@ -59,26 +59,26 @@
         /// <returns>An <see cref="IHtmlString"/> representation of the partial.</returns>
         public IHtmlString Partial(string viewName, dynamic modelForPartial)
         {
-	        try
-	        {
-		        var view = this.RenderContext.LocateView(viewName, modelForPartial);
+            try
+            {
+                var view = this.RenderContext.LocateView(viewName, modelForPartial);
 
-		        //var response = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
-		        var action = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
-		        //Action<Stream> action = response.Contents;
-		        var mem = new MemoryStream();
+                //var response = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
+                var action = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
+                //Action<Stream> action = response.Contents;
+                var mem = new MemoryStream();
 
-		        action.Invoke(mem);
-		        mem.Position = 0;
+                action.Invoke(mem);
+                mem.Position = 0;
 
-		        var reader = new StreamReader(mem);
+                var reader = new StreamReader(mem);
 
-		        return new NonEncodedHtmlString(reader.ReadToEnd());
-	        }
-	        catch (Exception exception)
-	        {
-		        throw new Exception("There was an error rendering the partial view '" + viewName + "'", exception);
-	        }
+                return new NonEncodedHtmlString(reader.ReadToEnd());
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("There was an error rendering the partial view '" + viewName + "'", exception);
+            }
         }
 
         /// <summary>

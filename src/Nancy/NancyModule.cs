@@ -176,6 +176,15 @@ namespace Nancy
         }
 
         /// <summary>
+        /// Adds a route to the module.
+        /// </summary>
+        /// <param name="route"></param>
+        public void Add(Route route)
+        {
+            routes.Add(route);
+        }
+
+        /// <summary>
         /// Gets or sets the validator locator.
         /// </summary>
         /// <remarks>This is automatically set by Nancy at runtime.</remarks>
@@ -276,14 +285,14 @@ namespace Nancy
         public class RouteBuilder : IHideObjectMembers
         {
             private readonly string method;
-            private readonly NancyModule parentModule;
+            private readonly INancyModule parentModule;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="RouteBuilder"/> class.
             /// </summary>
             /// <param name="method">The HTTP request method that the route should be available for.</param>
             /// <param name="parentModule">The <see cref="INancyModule"/> that the route is being configured for.</param>
-            public RouteBuilder(string method, NancyModule parentModule)
+            public RouteBuilder(string method, INancyModule parentModule)
             {
                 this.method = method;
                 this.parentModule = parentModule;
@@ -361,14 +370,14 @@ namespace Nancy
             {
                 var fullPath = GetFullPath(path);
 
-                this.parentModule.routes.Add(Route.FromSync(name, this.method, fullPath, condition, value));
+                this.parentModule.Add(Route.FromSync(name, this.method, fullPath, condition, value));
             }
 
             protected void AddRoute(string name, string path, Func<NancyContext, bool> condition, Func<dynamic, CancellationToken, Task<dynamic>> value)
             {
                 var fullPath = GetFullPath(path);
 
-                this.parentModule.routes.Add(new Route(name, this.method, fullPath, condition, value));
+                this.parentModule.Add(new Route(name, this.method, fullPath, condition, value));
             }
 
             private string GetFullPath(string path)

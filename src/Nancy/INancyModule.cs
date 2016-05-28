@@ -102,5 +102,11 @@ namespace Nancy
         /// </summary>
         /// <value>A <see cref="Negotiator"/> instance that is used to negotiate the content returned.</value>
         Negotiator Negotiate { get; }
+
+        /// <summary>
+        /// Adds a route to the module.
+        /// </summary>
+        /// <param name="route"></param>
+        void Add(Route route);
     }
 }

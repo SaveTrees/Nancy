@@ -10,10 +10,9 @@
     using System.Text;
     using System.Web.Razor;
     using System.Web.Razor.Parser.SyntaxTree;
-
-    using Nancy.Bootstrapper;
-    using Nancy.Helpers;
-    using Nancy.Responses;
+    using Bootstrapper;
+    using Helpers;
+    using Responses;
 
     /// <summary>
     /// View engine for rendering razor views.
