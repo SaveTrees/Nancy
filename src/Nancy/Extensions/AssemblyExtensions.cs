@@ -20,24 +20,36 @@ namespace Nancy.Extensions
 		{
 			Type[] types;
 
-			try
-			{
-				types = assembly.GetExportedTypes();
-			}
-			catch (FileNotFoundException)
-			{
-				types = new Type[] {};
-			}
-			catch (NotSupportedException)
-			{
-				types = new Type[] {};
-			}
-			catch (FileLoadException)
-			{
-				// probably assembly version conflict
-				types = new Type[] {};
-			}
-			return types;
+		    try
+		    {
+		        types = assembly.GetExportedTypes();
+		    }
+		    catch (FileNotFoundException)
+		    {
+		        types = new Type[] {};
+		    }
+		    catch (NotSupportedException)
+		    {
+		        types = new Type[] {};
+		    }
+		    catch (FileLoadException)
+		    {
+		        // probably assembly version conflict
+		        types = new Type[] {};
+		    }
+            catch (ReflectionTypeLoadException)
+            {
+                // Mono issue.
+                types = new Type[] { };
+            }
+            catch (Exception exception)
+		    {
+		        //Log.CurrentLogger.Debug()("Couldn't export types from assembly: {@Assembly}", assembly);
+                var exception2 = new Exception("assembly: " + assembly.FullName, exception);
+		        throw exception2;
+		    }
+
+		    return types;
 		}
 
 		public static IEnumerable<Assembly> LoadAndReturnReferencedAssemblies(this Assembly assembly, bool loadRecursively = true, HashSet<string> currentlyLoading = null)
