@@ -37,11 +37,11 @@ namespace Nancy.Extensions
 		        // probably assembly version conflict
 		        types = new Type[] {};
 		    }
-            catch (ReflectionTypeLoadException)
-            {
-                // Mono issue.
-                types = new Type[] { };
-            }
+            //catch (ReflectionTypeLoadException rtle)
+            //{
+            //    // Mono issue.
+            //    types = new Type[] { };
+            //}
             catch (Exception exception)
 		    {
 		        //Log.CurrentLogger.Debug()("Couldn't export types from assembly: {@Assembly}", assembly);
