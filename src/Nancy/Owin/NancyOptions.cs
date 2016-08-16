@@ -1,4 +1,6 @@
-﻿namespace Nancy.Owin
+﻿using Nancy.Diagnostics;
+
+namespace Nancy.Owin
 {
     using System;
     using Nancy.Bootstrapper;
@@ -34,5 +36,10 @@
         /// Defaults to false.
         /// </summary>
         public bool EnableClientCertificates { get; set; }
+
+        /// <summary>
+        /// The tracelog.
+        /// </summary>
+        public ITraceLog TraceLog { get; set; }
     }
 }

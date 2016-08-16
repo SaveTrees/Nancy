@@ -1,4 +1,6 @@
-﻿namespace Nancy.Owin
+﻿using Nancy.Diagnostics;
+
+namespace Nancy.Owin
 {
     using System;
     using System.Collections.Generic;
@@ -39,15 +41,17 @@
 		/// The server user key
 		/// </summary>
 		public const string ServerUser = "server.User";
-		
-		/// <summary>
+
+        /// <summary>
         /// Use Nancy in an OWIN pipeline
         /// </summary>
         /// <param name="configuration">A delegate to configure the <see cref="NancyOptions"/>.</param>
+        /// <param name="tracelog"></param>
         /// <returns>An OWIN middleware delegate.</returns>
-        public static MidFunc UseNancy(Action<NancyOptions> configuration)
+        public static MidFunc UseNancy(Action<NancyOptions> configuration, ITraceLog tracelog)
         {
             var options = new NancyOptions();
+            options.TraceLog = tracelog;
             configuration(options);
             return UseNancy(options);
         }
@@ -76,7 +80,8 @@
                         var owinRequestBody = Get<Stream>(environment, "owin.RequestBody");
                         var owinRequestProtocol = Get<string>(environment, "owin.RequestProtocol");
                         var owinCallCancelled = Get<CancellationToken>(environment, "owin.CallCancelled");
-                        var owinRequestHost = GetHeader(owinRequestHeaders, "Host") ?? Dns.GetHostName();
+                        var requestHost = GetHeader(owinRequestHeaders, "Host");
+                        var owinRequestHost = requestHost ?? Dns.GetHostName();
 
                         byte[] certificate = null;
                         if (options.EnableClientCertificates)
@@ -86,6 +91,7 @@
                         }
 
                         var serverClientIp = Get<string>(environment, "server.RemoteIpAddress");
+                        //options.TraceLog.WriteLog(sb => sb.Append(string.Format("serverClientIp: {0}", serverClientIp)));
 
                         var url = CreateUrl(owinRequestHost, owinRequestScheme, owinRequestPathBase, owinRequestPath, owinRequestQueryString);
 
