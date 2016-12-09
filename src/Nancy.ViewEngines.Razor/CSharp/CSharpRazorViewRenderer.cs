@@ -42,6 +42,10 @@
         /// </summary>
         public CodeDomProvider Provider { get; private set; }
 
+        private static readonly RazorCodeLanguage _razorCodeLanguage = new CSharpRazorCodeLanguage();
+
+        public RazorCodeLanguage RazorCodeLanguage { get; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpRazorViewRenderer"/> class.
         /// </summary>
@@ -59,6 +63,8 @@
             this.Host = new NancyRazorEngineHost(new CSharpRazorCodeLanguage(), defaultPageBaseType);
 
             this.Host.NamespaceImports.Add("Microsoft.CSharp.RuntimeBinder");
+
+            this.RazorCodeLanguage = _razorCodeLanguage;
         }
 
         /// <summary>

@@ -2,9 +2,9 @@
 {
     using System;
 
-    internal static class ExceptionExtensions
+    public static class ExceptionExtensions
     {
-        internal static Exception FlattenInnerExceptions(this Exception exception)
+        public static Exception FlattenInnerExceptions(this Exception exception)
         {
             var aggregateException = exception as AggregateException;
             if (aggregateException != null)

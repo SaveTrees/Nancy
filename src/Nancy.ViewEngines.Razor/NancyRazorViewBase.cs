@@ -5,7 +5,6 @@
     using System.Globalization;
     using System.IO;
     using System.Text;
-    using Microsoft.CSharp.RuntimeBinder;
     using Nancy.Helpers;
 
     /// <summary>
@@ -19,7 +18,7 @@
     /// Base class for nancy razor views.
     /// </summary>
     /// <typeparam name="TModel">Model type</typeparam>
-    public abstract class NancyRazorViewBase<TModel> : INancyRazorView<TModel>, INancyRazorView
+    public abstract class NancyRazorViewBase<TModel> : INancyRazorView<TModel>
     {
         private readonly StringBuilder contents;
         private string childBody;

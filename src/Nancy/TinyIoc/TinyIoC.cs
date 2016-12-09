@@ -80,10 +80,10 @@ namespace Nancy.TinyIoc
 #endif
 
 #if NETFX_CORE
-	using System.Threading.Tasks;
-	using Windows.Storage.Search;
+    using System.Threading.Tasks;
+    using Windows.Storage.Search;
     using Windows.Storage;
-	using Windows.UI.Xaml.Shapes;
+    using Windows.UI.Xaml.Shapes;
 #endif
 
     #region SafeDictionary
@@ -291,7 +291,7 @@ namespace Nancy.TinyIoc
 
             try
             {
-				assemblies = assembly.GetTypes();
+                assemblies = assembly.GetTypes();
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -509,18 +509,18 @@ namespace Nancy.TinyIoc
             }
         }
 
-	}
+    }
 
-	// @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
+    // @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
 #if NETFX_CORE
-	internal static class ListExtender
-	{
-		internal static void ForEach<T>(this List<T> list, Action<T> callback)
-		{
-			foreach (T obj in list)
-				callback(obj);
-		}
-	}
+    internal static class ListExtender
+    {
+        internal static void ForEach<T>(this List<T> list, Action<T> callback)
+        {
+            foreach (T obj in list)
+                callback(obj);
+        }
+    }
 #endif
 
     #endregion
@@ -681,7 +681,7 @@ namespace Nancy.TinyIoc
     {
         /// <summary>
         /// Attempt to resolve type, even if the type isn't registered.
-        /// 
+        ///
         /// Registered types/options will always take precedence.
         /// </summary>
         AttemptResolve,
@@ -694,7 +694,7 @@ namespace Nancy.TinyIoc
         /// <summary>
         /// Attempt to resolve unregistered type if requested type is generic
         /// and no registration exists for the specific generic parameters used.
-        /// 
+        ///
         /// Registered types/options will always take precedence.
         /// </summary>
         GenericsOnly
@@ -800,33 +800,33 @@ namespace Nancy.TinyIoc
                 CurrentDomain = new AppDomain();
             }
 
-			// @mbrit - 2012-05-30 - in WinRT, this should be done async...
+            // @mbrit - 2012-05-30 - in WinRT, this should be done async...
             public async Task<List<Assembly>> GetAssembliesAsync()
             {
                 var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
 
                 List<Assembly> assemblies = new List<Assembly>();
 
-				var files = await folder.GetFilesAsync();
+                var files = await folder.GetFilesAsync();
 
                 foreach (StorageFile file in files)
                 {
                     if (file.FileType == ".dll" || file.FileType == ".exe")
                     {
                         AssemblyName name = new AssemblyName() { Name = System.IO.Path.GetFileNameWithoutExtension(file.Name) };
-						try
-						{
-							var asm = Assembly.Load(name);
-							assemblies.Add(asm);
-						}
-						catch
-						{
-							// ignore exceptions here...
-						}
+                        try
+                        {
+                            var asm = Assembly.Load(name);
+                            assemblies.Add(asm);
+                        }
+                        catch
+                        {
+                            // ignore exceptions here...
+                        }
                     }
                 }
 
-				return assemblies;
+                return assemblies;
             }
         }
 #endif
@@ -933,7 +933,7 @@ namespace Nancy.TinyIoc
 #endif
             /// <summary>
             /// Switches to a custom lifetime manager factory if possible.
-            /// 
+            ///
             /// Usually used for RegisterOptions "To*" extension methods such as the ASP.Net per-request one.
             /// </summary>
             /// <param name="instance">RegisterOptions instance</param>
@@ -1000,7 +1000,7 @@ namespace Nancy.TinyIoc
 
             /// <summary>
             /// Switches to a custom lifetime manager factory if possible.
-            /// 
+            ///
             /// Usually used for RegisterOptions "To*" extension methods such as the ASP.Net per-request one.
             /// </summary>
             /// <param name="instance">MultiRegisterOptions instance</param>
@@ -1051,7 +1051,7 @@ namespace Nancy.TinyIoc
         #region Registration
         /// <summary>
         /// Attempt to automatically register all non-generic classes and interfaces in the current app domain.
-        /// 
+        ///
         /// If more than one class implements an interface then only one implementation will be registered
         /// although no error will be thrown.
         /// </summary>
@@ -1067,7 +1067,7 @@ namespace Nancy.TinyIoc
         /// <summary>
         /// Attempt to automatically register all non-generic classes and interfaces in the current app domain.
         /// Types will only be registered if they pass the supplied registration predicate.
-        /// 
+        ///
         /// If more than one class implements an interface then only one implementation will be registered
         /// although no error will be thrown.
         /// </summary>
@@ -1111,9 +1111,9 @@ namespace Nancy.TinyIoc
 #endif
         }
 
-		/// <summary>
+        /// <summary>
         /// Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
-        /// 
+        ///
         /// If more than one class implements an interface then only one implementation will be registered
         /// although no error will be thrown.
         /// </summary>
@@ -1126,7 +1126,7 @@ namespace Nancy.TinyIoc
         /// <summary>
         /// Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
         /// Types will only be registered if they pass the supplied registration predicate.
-        /// 
+        ///
         /// If more than one class implements an interface then only one implementation will be registered
         /// although no error will be thrown.
         /// </summary>
@@ -1418,7 +1418,7 @@ namespace Nancy.TinyIoc
 
         /// <summary>
         /// Register multiple implementations of a type.
-        /// 
+        ///
         /// Internally this registers each implementation using the full name of the class as its registration name.
         /// </summary>
         /// <typeparam name="RegisterType">Type that each implementation implements</typeparam>
@@ -1431,7 +1431,7 @@ namespace Nancy.TinyIoc
 
         /// <summary>
         /// Register multiple implementations of a type.
-        /// 
+        ///
         /// Internally this registers each implementation using the full name of the class as its registration name.
         /// </summary>
         /// <param name="registrationType">Type that each implementation implements</param>
@@ -1448,7 +1448,7 @@ namespace Nancy.TinyIoc
 //#else
                 if (!registrationType.IsAssignableFrom(type))
 //#endif
-					throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.AssemblyQualifiedName));
+                    throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.AssemblyQualifiedName));
 
             if (implementationTypes.Count() != implementationTypes.Distinct().Count())
             {
@@ -1777,7 +1777,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <param name="resolveType">Type to resolve</param>
@@ -1793,7 +1793,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <param name="resolveType">Type to resolve</param>
@@ -1810,7 +1810,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <param name="resolveType">Type to resolve</param>
@@ -1827,7 +1827,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <param name="resolveType">Type to resolve</param>
@@ -1902,7 +1902,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <typeparam name="ResolveType">Type to resolve</typeparam>
@@ -1919,7 +1919,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <typeparam name="ResolveType">Type to resolve</typeparam>
@@ -1937,7 +1937,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registrations fail to construct objects when called.
         /// </summary>
         /// <typeparam name="ResolveType">Type to resolve</typeparam>
@@ -1955,7 +1955,7 @@ namespace Nancy.TinyIoc
         ///
         /// Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
         /// All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
-        /// 
+        ///
         /// Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
         /// </summary>
         /// <typeparam name="ResolveType">Type to resolve</typeparam>
@@ -2417,7 +2417,7 @@ namespace Nancy.TinyIoc
         {
             /// <summary>
             /// Whether to assume this factory successfully constructs its objects
-            /// 
+            ///
             /// Generally set to true for delegate style factories as CanResolve cannot delve
             /// into the delegates they contain.
             /// </summary>
@@ -2743,7 +2743,7 @@ namespace Nancy.TinyIoc
 
         /// <summary>
         /// Stores an particular instance to return for a type
-        /// 
+        ///
         /// Stores the instance with a weak reference
         /// </summary>
         private class WeakInstanceFactory : ObjectFactoryBase, IDisposable
@@ -2895,7 +2895,7 @@ namespace Nancy.TinyIoc
 
             public void Dispose()
             {
-                if (this._Current == null) 
+                if (this._Current == null)
                     return;
 
                 var disposable = this._Current as IDisposable;
@@ -3059,7 +3059,7 @@ namespace Nancy.TinyIoc
             }
         }
         private readonly SafeDictionary<TypeRegistration, ObjectFactoryBase> _RegisteredTypes;
-#if USE_OBJECT_CONSTRUCTOR 
+#if USE_OBJECT_CONSTRUCTOR
         private delegate object ObjectConstructor(params object[] parameters);
         private static readonly SafeDictionary<ConstructorInfo, ObjectConstructor> _ObjectConstructorCache = new SafeDictionary<ConstructorInfo, ObjectConstructor>();
 #endif
@@ -3090,18 +3090,18 @@ namespace Nancy.TinyIoc
                 var types = assemblies.SelectMany(a => a.SafeGetTypes()).Where(t => !IsIgnoredType(t, registrationPredicate)).ToList();
 
                 var concreteTypes = types
-					.Where(type => !type.IsGenericTypeDefinition())
-					.Where(type => type.IsClass())
-					.Where(type => !type.IsAbstract())
-					.Where(type => type != this.GetType())
-					.Where(type => type.DeclaringType != this.GetType())
-					.ToList();
+                    .Where(type => !type.IsGenericTypeDefinition())
+                    .Where(type => type.IsClass())
+                    .Where(type => !type.IsAbstract())
+                    .Where(type => type != this.GetType())
+                    .Where(type => type.DeclaringType != this.GetType())
+                    .ToList();
 
                 foreach (var type in concreteTypes)
                 {
                     try
                     {
-						RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
+                        RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
                     }
                     catch (MethodAccessException)
                     {
@@ -3125,7 +3125,7 @@ namespace Nancy.TinyIoc
                         {
                             RegisterMultiple(type, implementations);
                         }
-                    }   
+                    }
 
                     var firstImplementation = implementations.FirstOrDefault();
                     if (firstImplementation != null)
@@ -3182,7 +3182,7 @@ namespace Nancy.TinyIoc
 
             if (registrationPredicate != null)
             {
-                ignoreChecks.Add(t => !registrationPredicate(t));    
+                ignoreChecks.Add(t => !registrationPredicate(t));
             }
 
             foreach (var check in ignoreChecks)
@@ -3565,12 +3565,15 @@ namespace Nancy.TinyIoc
 
             foreach (var parameter in ctor.GetParameters())
             {
+                if (parameter.IsOptional)
+                    return true;
+
                 if (string.IsNullOrEmpty(parameter.Name))
                     return false;
 
                 var isParameterOverload = parameters.ContainsKey(parameter.Name);
 
-//#if NETFX_CORE                
+//#if NETFX_CORE
 //				if (parameter.ParameterType.GetTypeInfo().IsPrimitive && !isParameterOverload)
 //#else
                 if (parameter.ParameterType.IsPrimitive() && !isParameterOverload)
@@ -3633,6 +3636,8 @@ namespace Nancy.TinyIoc
             return ConstructType(requestedType, implementationType, null, parameters, options);
         }
 
+        private static readonly SafeDictionary<Type, object> _DefaultValues = new SafeDictionary<Type, object>();
+
         private object ConstructType(Type requestedType, Type implementationType, ConstructorInfo constructor, NamedParameterOverloads parameters, ResolveOptions options)
         {
             var typeToConstruct = implementationType;
@@ -3642,7 +3647,7 @@ namespace Nancy.TinyIoc
             {
                 if (requestedType == null || !requestedType.IsGenericType() || !requestedType.GetGenericArguments().Any())
                     throw new TinyIoCResolutionException(typeToConstruct);
-                 
+
                 typeToConstruct = typeToConstruct.MakeGenericType(requestedType.GetGenericArguments());
             }
 #endif
@@ -3667,12 +3672,40 @@ namespace Nancy.TinyIoc
 
                 try
                 {
-                    args[parameterIndex] = parameters.ContainsKey(currentParam.Name) ? 
-                                            parameters[currentParam.Name] : 
-                                            ResolveInternal(
-                                                new TypeRegistration(currentParam.ParameterType), 
-                                                NamedParameterOverloads.Default, 
-                                                options);
+                    object parameterValue;
+                    if (parameters.TryGetValue(currentParam.Name, out parameterValue))
+                    {
+                        args[parameterIndex] = parameterValue;
+                    }
+                    else
+                    {
+                        // && (currentParam.ParameterType == typeof(string) || currentParam.ParameterType.IsValueType())
+                        if (currentParam.IsOptional)
+                        {
+                            try
+                            {
+                                args[parameterIndex] = currentParam.DefaultValue;
+                            }
+                            catch
+                            {
+                                // The currentParam.DefaultValue is not always valid, e.g. with default(DateTime), we get a 'SystemFormatException'- possibly due to culture differences.
+                                // If so, Activator.CreateInstance(Type) *should* always work.
+                                object defaultValue;
+                                if (!_DefaultValues.TryGetValue(currentParam.ParameterType, out defaultValue))
+                                {
+                                    // Potentially creating 'defaultValue' twice in multi-threaded writes isn't a problem; all instances arae equivalent and it'll only happen once,
+                                    // so even if Activator.CreateInstance(Type) were unpleasantly slow, it wouldn't really matter.
+                                    defaultValue = Activator.CreateInstance(currentParam.ParameterType);
+                                    _DefaultValues[currentParam.ParameterType] = defaultValue;
+                                }
+                                args[parameterIndex] = defaultValue;
+                            }
+                        }
+                        else
+                        {
+                            args[parameterIndex] = ResolveInternal(new TypeRegistration(currentParam.ParameterType), NamedParameterOverloads.Default, options);
+                        }
+                    }
                 }
                 catch (TinyIoCResolutionException ex)
                 {
@@ -3702,7 +3735,7 @@ namespace Nancy.TinyIoc
             }
         }
 
-#if USE_OBJECT_CONSTRUCTOR 
+#if USE_OBJECT_CONSTRUCTOR
         private static ObjectConstructor CreateObjectConstructionDelegateWithCache(ConstructorInfo constructor)
         {
             ObjectConstructor objectConstructor;
@@ -3711,7 +3744,7 @@ namespace Nancy.TinyIoc
 
             // We could lock the cache here, but there's no real side
             // effect to two threads creating the same ObjectConstructor
-            // at the same time, compared to the cost of a lock for 
+            // at the same time, compared to the cost of a lock for
             // every creation.
             var constructorParams = constructor.GetParameters();
             var lambdaParams = Expression.Parameter(typeof(object[]), "parameters");

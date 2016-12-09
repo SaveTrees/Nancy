@@ -1,4 +1,7 @@
-﻿namespace Nancy.ViewEngines.SuperSimpleViewEngine
+﻿using System;
+using Nancy.Diagnostics;
+
+namespace Nancy.ViewEngines.SuperSimpleViewEngine
 {
     using System.Collections.Generic;
     using System.IO;
@@ -59,15 +62,29 @@
             return new HtmlResponse(contents: s =>
             {
                 var writer = new StreamWriter(s);
-                var templateContents = renderContext.ViewCache.GetOrAdd(viewLocationResult, vr =>
+                var template = renderContext.ViewCache.GetOrAdd(viewLocationResult, vr =>
                 {
+                    string content;
                     using (var reader = vr.Contents.Invoke())
-                        return reader.ReadToEnd();
-                });
+                    {
+                        content = reader.ReadToEnd();
+                    }
+                    return () => new SuperSimpleView(content);
+                })();
 
-                writer.Write(this.viewEngine.Render(templateContents, model, new NancyViewEngineHost(renderContext)));
+                writer.Write(this.viewEngine.Render(template.Body, model, new NancyViewEngineHost(renderContext)));
                 writer.Flush();
             });
+        }
+
+        /// <summary>
+        /// Pre compile the views.
+        /// </summary>
+        /// <param name="viewLocationResults"></param>
+        /// <param name="traceLog"></param>
+        public IEnumerable<ViewTemplateCompilationResult<IViewTemplate>> CompileViewTemplates(ICollection<ViewLocationResult> viewLocationResults, ITraceLog traceLog)
+        {
+            throw new NotSupportedException();
         }
     }
 }

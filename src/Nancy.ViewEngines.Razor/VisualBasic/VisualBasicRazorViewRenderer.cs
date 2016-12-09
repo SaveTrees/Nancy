@@ -40,6 +40,8 @@
         /// </summary>
         public CodeDomProvider Provider { get; private set; }
 
+        public RazorCodeLanguage RazorCodeLanguage { get; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VisualBasicRazorViewRenderer"/> class.
         /// </summary>
@@ -52,6 +54,8 @@
             this.Provider = new VBCodeProvider();
 
             this.Host = new NancyRazorEngineHost(new VBRazorCodeLanguage(), defaultPageBaseType);
+
+            this.RazorCodeLanguage = new VBRazorCodeLanguage();
         }
 
         /// <summary>

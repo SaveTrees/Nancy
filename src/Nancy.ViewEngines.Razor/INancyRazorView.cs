@@ -5,7 +5,7 @@
     /// <summary>
     /// A Nancy razor view.
     /// </summary>
-    public interface INancyRazorView
+    public interface INancyRazorView : INancyView
     {
         /// <summary>
         /// Writes literals like markup: "<p>Foo</p>"
@@ -14,17 +14,12 @@
         void WriteLiteral(object value);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="razorViewEngine"></param>
         /// <param name="renderContext"></param>
         /// <param name="model"></param>
         void Initialize(IRazorViewEngine razorViewEngine, IRenderContext renderContext, dynamic model);
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        string Body { get; }
 
         /// <summary>
         /// Gets or sets the section contents.
