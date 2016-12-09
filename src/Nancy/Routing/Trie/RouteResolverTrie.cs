@@ -68,13 +68,13 @@ namespace Nancy.Routing.Trie
             }
 
             // TODO -concurrent if allowing updates?
-            if (!this.routeTries.ContainsKey(method))
+            TrieNode value;
+            if (!this.routeTries.TryGetValue(method, out value))
             {
                 return MatchResult.NoMatches;
             }
 
-            return this.routeTries[method].GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
-                                          .ToArray();
+            return value.GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context).ToArray();
         }
 
         /// <summary>

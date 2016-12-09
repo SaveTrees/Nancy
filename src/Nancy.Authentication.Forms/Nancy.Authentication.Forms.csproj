@@ -92,8 +92,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Owin">
-      <HintPath>..\..\..\..\..\savetrees\references\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\references\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">
@@ -122,7 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nancy.Cryptography\Nancy.Cryptography.csproj">
-      <Project>{e90334a6-bdd0-403a-b734-a93457d0e8f8}</Project>
+      <Project>{E90334A6-BDD0-403A-B734-A93457D0E8F8}</Project>
       <Name>Nancy.Cryptography</Name>
     </ProjectReference>
     <ProjectReference Include="..\Nancy\Nancy.csproj">

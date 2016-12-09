@@ -1,3 +1,6 @@
+using System.Diagnostics.Contracts;
+using System.IO;
+
 namespace Nancy.Extensions
 {
     using System;
@@ -107,6 +110,29 @@ namespace Nancy.Extensions
             }
 
             return string.Concat(converter(value.Substring(0, 1)), value.Substring(1));
+        }
+
+        [Pure]
+        public static string NormalizePathName(this string path, bool toLowerCase = false, bool removeLeadingSlash = false, bool removeTrailingSlash = true)
+        {
+            var path2 = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+            if (removeLeadingSlash && path2[0] == Path.DirectorySeparatorChar)
+            {
+                path2 = path2.Substring(1);
+            }
+
+            if (removeTrailingSlash && path2[path2.Length - 1] == Path.DirectorySeparatorChar)
+            {
+                path2 = path2.Substring(0, path2.Length - 1);
+            }
+
+            if (toLowerCase)
+            {
+                path2 = path2.ToLowerInvariant();
+            }
+
+            return path2;
         }
     }
 }

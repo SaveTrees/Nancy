@@ -12,7 +12,7 @@
     /// <summary>
     /// A custom razor engine host responsible for decorating the existing code generators with nancy versions.
     /// </summary>
-    public class NancyRazorEngineHost : RazorEngineHost
+    public sealed class NancyRazorEngineHost : RazorEngineHost
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NancyRazorEngineHost"/> class.
@@ -28,13 +28,13 @@
             }
 
             this.DefaultBaseClass = defaultPageBaseType.FullName;
-            this.DefaultNamespace = "RazorOutput";
+            this.DefaultNamespace = "NancyRazorGeneratedOutput";
             this.DefaultClassName = "RazorView";
 
-            var context = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo",
-                typeof (HelperResult).FullName, "DefineSection");
-            context.ResolveUrlMethodName = "ResolveUrl";
-
+            var context = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", typeof(HelperResult).FullName, "DefineSection")
+            {
+                ResolveUrlMethodName = "ResolveUrl"
+            };
             this.GeneratedClassContext = context;
         }
 

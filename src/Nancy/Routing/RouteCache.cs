@@ -58,9 +58,7 @@
             foreach (var module in modules)
             {
                 var moduleType = module.GetType();
-
-                var routes =
-                    module.Routes.Select(r => r.Description).ToArray();
+                var routes = module.Routes.Select(r => r.Description).ToArray();
 
                 foreach (var routeDescription in routes)
                 {

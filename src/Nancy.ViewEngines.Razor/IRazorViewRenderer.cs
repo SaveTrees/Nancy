@@ -35,5 +35,7 @@
         /// Gets the provider that is used to generate code.
         /// </summary>
         CodeDomProvider Provider { get; }
+
+        RazorCodeLanguage RazorCodeLanguage { get; }
     }
 }

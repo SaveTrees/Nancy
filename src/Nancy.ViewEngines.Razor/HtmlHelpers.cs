@@ -63,6 +63,11 @@
             {
                 var view = this.RenderContext.LocateView(viewName, modelForPartial);
 
+                if (view == null)
+                {
+                    throw new Exception("Could not locate the view '" + viewName + "'");
+                }
+
                 //var response = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
                 var action = this.Engine.RenderView(view, modelForPartial, this.RenderContext, true);
                 //Action<Stream> action = response.Contents;

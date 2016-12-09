@@ -80,10 +80,10 @@ namespace Nancy.TinyIoc
 #endif
 
 #if NETFX_CORE
-	using System.Threading.Tasks;
-	using Windows.Storage.Search;
+    using System.Threading.Tasks;
+    using Windows.Storage.Search;
     using Windows.Storage;
-	using Windows.UI.Xaml.Shapes;
+    using Windows.UI.Xaml.Shapes;
 #endif
 
     #region SafeDictionary
@@ -291,7 +291,7 @@ namespace Nancy.TinyIoc
 
             try
             {
-				assemblies = assembly.GetTypes();
+                assemblies = assembly.GetTypes();
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -509,18 +509,18 @@ namespace Nancy.TinyIoc
             }
         }
 
-	}
+    }
 
-	// @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
+    // @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
 #if NETFX_CORE
-	internal static class ListExtender
-	{
-		internal static void ForEach<T>(this List<T> list, Action<T> callback)
-		{
-			foreach (T obj in list)
-				callback(obj);
-		}
-	}
+    internal static class ListExtender
+    {
+        internal static void ForEach<T>(this List<T> list, Action<T> callback)
+        {
+            foreach (T obj in list)
+                callback(obj);
+        }
+    }
 #endif
 
     #endregion
@@ -800,33 +800,33 @@ namespace Nancy.TinyIoc
                 CurrentDomain = new AppDomain();
             }
 
-			// @mbrit - 2012-05-30 - in WinRT, this should be done async...
+            // @mbrit - 2012-05-30 - in WinRT, this should be done async...
             public async Task<List<Assembly>> GetAssembliesAsync()
             {
                 var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
 
                 List<Assembly> assemblies = new List<Assembly>();
 
-				var files = await folder.GetFilesAsync();
+                var files = await folder.GetFilesAsync();
 
                 foreach (StorageFile file in files)
                 {
                     if (file.FileType == ".dll" || file.FileType == ".exe")
                     {
                         AssemblyName name = new AssemblyName() { Name = System.IO.Path.GetFileNameWithoutExtension(file.Name) };
-						try
-						{
-							var asm = Assembly.Load(name);
-							assemblies.Add(asm);
-						}
-						catch
-						{
-							// ignore exceptions here...
-						}
+                        try
+                        {
+                            var asm = Assembly.Load(name);
+                            assemblies.Add(asm);
+                        }
+                        catch
+                        {
+                            // ignore exceptions here...
+                        }
                     }
                 }
 
-				return assemblies;
+                return assemblies;
             }
         }
 #endif
@@ -1111,7 +1111,7 @@ namespace Nancy.TinyIoc
 #endif
         }
 
-		/// <summary>
+        /// <summary>
         /// Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
         ///
         /// If more than one class implements an interface then only one implementation will be registered
@@ -1448,7 +1448,7 @@ namespace Nancy.TinyIoc
 //#else
                 if (!registrationType.IsAssignableFrom(type))
 //#endif
-					throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.AssemblyQualifiedName));
+                    throw new ArgumentException(String.Format("types: The type {0} is not assignable from {1}", registrationType.FullName, type.AssemblyQualifiedName));
 
             if (implementationTypes.Count() != implementationTypes.Distinct().Count())
             {
@@ -3090,18 +3090,18 @@ namespace Nancy.TinyIoc
                 var types = assemblies.SelectMany(a => a.SafeGetTypes()).Where(t => !IsIgnoredType(t, registrationPredicate)).ToList();
 
                 var concreteTypes = types
-					.Where(type => !type.IsGenericTypeDefinition())
-					.Where(type => type.IsClass())
-					.Where(type => !type.IsAbstract())
-					.Where(type => type != this.GetType())
-					.Where(type => type.DeclaringType != this.GetType())
-					.ToList();
+                    .Where(type => !type.IsGenericTypeDefinition())
+                    .Where(type => type.IsClass())
+                    .Where(type => !type.IsAbstract())
+                    .Where(type => type != this.GetType())
+                    .Where(type => type.DeclaringType != this.GetType())
+                    .ToList();
 
                 foreach (var type in concreteTypes)
                 {
                     try
                     {
-						RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
+                        RegisterInternal(type, string.Empty, GetDefaultObjectFactory(type, type));
                     }
                     catch (MethodAccessException)
                     {
@@ -3679,7 +3679,8 @@ namespace Nancy.TinyIoc
                     }
                     else
                     {
-                        if (currentParam.IsOptional && (currentParam.ParameterType == typeof(string) || currentParam.ParameterType.IsValueType()))
+                        // && (currentParam.ParameterType == typeof(string) || currentParam.ParameterType.IsValueType())
+                        if (currentParam.IsOptional)
                         {
                             try
                             {

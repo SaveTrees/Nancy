@@ -171,11 +171,8 @@
 
         private IEnumerable<ViewLocationResult> GetInititialViewLocations()
         {
-            var supportedViewExtensions =
-                GetSupportedViewExtensions();
-
-            var viewsLocatedByProviders =
-                this.viewLocationProvider.GetLocatedViews(supportedViewExtensions);
+            var supportedViewExtensions = GetSupportedViewExtensions();
+            var viewsLocatedByProviders = this.viewLocationProvider.GetLocatedViews(supportedViewExtensions);
 
             return viewsLocatedByProviders.ToArray();
         }

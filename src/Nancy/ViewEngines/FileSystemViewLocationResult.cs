@@ -44,7 +44,8 @@
         /// <returns>True if stale, false otherwise</returns>
         public override bool IsStale()
         {
-            return this.lastUpdated != this.fileSystem.GetLastModified(this.fileName);
+            var isStale = this.lastUpdated != this.fileSystem.GetLastModified(this.fileName);
+            return isStale;
         }
 
         /// <summary>

@@ -1,8 +1,7 @@
 ﻿namespace Nancy.ViewEngines
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
+    using Diagnostics;
 
     /// <summary>
     /// Defines the functionality that a view engine must support to be integrated into Nancy.
@@ -30,5 +29,12 @@
         /// <param name="renderContext"></param>
         /// <returns>A response</returns>
         Response RenderView(ViewLocationResult viewLocationResult, dynamic model, IRenderContext renderContext);
+
+        /// <summary>
+        /// Pre compile the views.
+        /// </summary>
+        /// <param name="viewLocationResults"></param>
+        /// <param name="traceLog"></param>
+        IEnumerable<ViewTemplateCompilationResult<IViewTemplate>> CompileViewTemplates(ICollection<ViewLocationResult> viewLocationResults, ITraceLog traceLog);
     }
 }
