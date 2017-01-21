@@ -87,12 +87,12 @@
 
         private IEnumerable<MatchResult> GetFullGreedy(string[] segments, int currentIndex, IDictionary<string, object> capturedParameters)
         {
-            if (!this.NodeData.Any())
+            if (!this.NodeData.Any() || segments.Length == currentIndex + 1)
             {
                 return new MatchResult[] { };
             }
 
-            var value = segments.Skip(currentIndex).Aggregate((seg1, seg2) => seg1 + "/" + seg2);
+            var value = segments.Skip(currentIndex + 1).Aggregate((seg1, seg2) => seg1 + "/" + seg2);
             capturedParameters[this.parameterName] = value;
 
             return this.NodeData.Select(nd => nd.ToResult(capturedParameters));

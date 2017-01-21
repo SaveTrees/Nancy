@@ -104,7 +104,7 @@ namespace Nancy.Responses.Negotiation
                 return plus > 0 ? subType.Substring(plus) : "";
             }
         }
-        
+
         /// <summary>
         /// Whether or not a media range matches another, taking into account wildcards
         /// </summary>
@@ -117,7 +117,7 @@ namespace Nancy.Responses.Negotiation
         }
 
         /// <summary>
-        /// Whether or not a media range matches another, taking into account wildcards and parameters
+        /// Whether or not a media range matches another and whether the parameters match.
         /// </summary>
         /// <param name="other">Other media range</param>
         /// <returns>True if matching, false if not</returns>
@@ -128,7 +128,7 @@ namespace Nancy.Responses.Negotiation
         }
 
         /// <summary>
-        /// Whether or not a media range matches another, taking into account wildcards and parameters
+        /// Whether or not a media range matches another exactly on type, subtype and parameters.
         /// </summary>
         /// <param name="other">Other media range</param>
         /// <returns>True if matching, false if not</returns>
@@ -138,9 +138,8 @@ namespace Nancy.Responses.Negotiation
             return matches;
         }
 
-        
         /// <summary>
-        /// Whether or not a media range matches another exactly
+        /// Whether or not a media range matches another exactly on type and subtype.
         /// </summary>
         /// <param name="other">Other media range</param>
         /// <returns>True if matching, false if not</returns>
@@ -149,7 +148,7 @@ namespace Nancy.Responses.Negotiation
             var matches = this.Type.MatchesExactly(other.Type) && this.Subtype.MatchesExactly(other.Subtype);
             return matches;
         }
-        
+
         /// <summary>
         /// Creates a MediaRange from a "Type/SubType" string
         /// </summary>
@@ -180,7 +179,7 @@ namespace Nancy.Responses.Negotiation
         ///// Compares the current object with another object of the same type.
         ///// </summary>
         ///// <returns>
-        ///// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
+        ///// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>.
         ///// </returns>
         ///// <param name="other">An object to compare with this object.</param>
         //public int CompareTo(MediaRange other)
@@ -199,7 +198,7 @@ namespace Nancy.Responses.Negotiation
         //	{
         //		if (other.Type.IsWildcard)
         //		{
-                    
+
         //		}
         //	}
         //}

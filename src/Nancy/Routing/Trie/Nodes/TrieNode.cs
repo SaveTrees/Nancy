@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Nancy.Routing.Trie.Nodes
 {
     using System;
@@ -7,6 +9,7 @@ namespace Nancy.Routing.Trie.Nodes
     /// <summary>
     /// A base class representing a node in the route trie
     /// </summary>
+    [DebuggerDisplay("{RouteDefinitionSegment}")]
     public abstract class TrieNode
     {
         private readonly ITrieNodeFactory nodeFactory;

@@ -74,7 +74,9 @@ namespace Nancy.Routing.Trie
                 return MatchResult.NoMatches;
             }
 
-            return value.GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context).ToArray();
+            var matchResults = value.GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context).ToArray();
+
+            return matchResults;
         }
 
         /// <summary>
