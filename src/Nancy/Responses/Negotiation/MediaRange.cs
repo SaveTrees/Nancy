@@ -91,6 +91,28 @@ namespace Nancy.Responses.Negotiation
         }
 
         /// <summary>
+        /// Gets the vendor tree name, returns an empty string, if this is not a vendor tree type.
+        /// </summary>
+        /// <value><see langword="true" /> if the media type is a vendor tree type, otherwise <see langword="false" />.</value>
+        public string VendorTreeName
+        {
+            get
+            {
+                if (!this.IsVendorTreeType)
+                {
+                    return "";
+                }
+
+                var subType = (string)this.Subtype;
+                var vnd = subType.IndexOf("vnd.", StringComparison.Ordinal) + 4;
+                var plus = subType.IndexOf('+', vnd);
+                var vendorTreeName = subType.Substring(vnd, plus - vnd);
+
+                return vendorTreeName;
+            }
+        }
+
+        /// <summary>
         /// Returns the media type suffix (the [+suffix]), which will be empty where there is no suffix
         /// </summary>
         /// <example>"application/xhtml+xml", "image/png will return "+xml" and "" respectively</example>
@@ -99,7 +121,7 @@ namespace Nancy.Responses.Negotiation
             get
             {
                 var subType = (string) this.Subtype;
-                var plus = (subType).IndexOf('+');
+                var plus = subType.IndexOf('+');
 
                 return plus > 0 ? subType.Substring(plus) : "";
             }
